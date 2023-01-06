@@ -45,7 +45,3 @@
 .submitButton:hover, .submitButton:target {
   background-color: rgb(158, 0, 158);
 }
-
-.submitButton:current {
-  background-color: rgb(101, 0, 101);
-}
