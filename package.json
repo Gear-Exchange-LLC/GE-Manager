@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/DevGamer9991/GE-Database/issues"
   },
-  "homepage": "https://github.com/DevGamer9991/GE-Database#readme"
+  "homepage": "https://github.com/DevGamer9991/GE-Database#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
