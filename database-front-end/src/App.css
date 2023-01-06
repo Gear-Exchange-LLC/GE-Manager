@@ -29,3 +29,23 @@
 .InputItem > input {
   height: 20px;
 }
+
+.submitButton {
+  background-color: purple;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+  padding-block: 10px;
+  width: 200px;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+}
+
+.submitButton:hover, .submitButton:target {
+  background-color: rgb(158, 0, 158);
+}
+
+.submitButton:current {
+  background-color: rgb(101, 0, 101);
+}

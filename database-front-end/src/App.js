@@ -29,6 +29,7 @@ function App() {
           <p>Condition:</p>
           <input type="text" onChange={(event) => setBrand(event.target.value)}/>
         </div>
+        <input type="button" className='submitButton' value="Submit" onClick={() => console.log(brand)} />
       </div>
     </div>
   );
