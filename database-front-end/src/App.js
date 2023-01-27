@@ -1,10 +1,20 @@
 import logo from './logo.svg';
-import React from "react";
+import React, { useState, useEffect } from "react";
 import './App.css';
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://127.0.0.1:3001";
+
+const socket = socketIOClient(ENDPOINT);
 
 function App() {
 
   const [brand, setBrand] = React.useState("");
+
+  useEffect(() => {
+    socket.on("update", (socket) => {
+      
+    })
+  })
 
   return (
     <div className="App">
