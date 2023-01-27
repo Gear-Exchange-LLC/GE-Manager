@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import CreateItem from './CreateItem';
 import Dashboard from "./Dashboard"
 import {
   BrowserRouter,
@@ -13,16 +13,17 @@ import {
   Redirect,
   Navigate,
 } from "react-router-dom";
+import { SocketContext, socket } from './context/SocketContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <SocketContext.Provider value={socket}>
+    <BrowserRouter>  
       <Routes>
-        <Route path='/create-item' exact={true} element={<App />} />
+        <Route path='/create-item' exact={true} element={<CreateItem />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </SocketContext.Provider>
 );
