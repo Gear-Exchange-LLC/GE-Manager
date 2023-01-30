@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const fs = require('fs');
 const http = require('http');
 var cors = require("cors");
 const server = http.createServer(app);
@@ -21,16 +22,16 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', async (socket) => {
-  console.log('a user connected');
+  console.log('a user connected: ' + socket.id);
 
-  socket.emit("update", read())
+  io.to(socket.id).emit("update", JSON.parse(fs.readFileSync("db.json")))
 
-  socket.on("create-item", (value) => {
-    add(value).then((value) => {
-        socket.to(socket.id).emit("created");
+  socket.on("create-item", async (value) => {
+    add(value)
 
-        socket.emit("update", )
-    })
+    io.to(socket.id).emit("created");
+
+    io.emit("update", await read())
   })
 });
 

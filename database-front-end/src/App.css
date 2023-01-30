@@ -65,13 +65,45 @@
     height: 100vh;
 }
 
+.Header {
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Header > h1 {
+  margin: 0;
+  padding: 0;
+}
+
 .CardWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  height: 100vh;
-  overflow: scroll;
+  height: calc(100vh - 70px);
+  overflow-y: scroll;
+  
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f100;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #1f2229;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #17191f;
 }
 
 .Card {
@@ -79,6 +111,7 @@
   max-width: 1000px;
   width: 100%;
   height: 150px;
+  min-height: 150px;
   border-radius: 10px;
   margin: 5px;
 }

@@ -21,12 +21,18 @@ function CreateItem() {
   const [items, setItems] = React.useState([]);
 
   function createItem() {
-    const value = { date: date, firstName: FirstName, middleName: MiddleName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, poNum: PONum, items: items }
+    const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, middleName: MiddleName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, poNum: PONum, items: items }
 
     console.log(value);
 
     socket.emit("create-item", JSON.stringify(value))
   }
+
+  useEffect(() => {
+    socket.on("created", (socket) => {
+        window.location.href = "/dashboard"
+    })
+  })
 
   return (
     <div className="App">
