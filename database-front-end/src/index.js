@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import CreateItem from './CreateItem';
 import Dashboard from "./Dashboard"
+import CardPage from './CardPage';
 import {
   BrowserRouter,
   createBrowserRouter,
@@ -21,6 +22,7 @@ root.render(
     <BrowserRouter>  
       <Routes>
         <Route path='/create-item' exact={true} element={<CreateItem />} />
+        <Route path="/card" element={<CardPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
       </Routes>

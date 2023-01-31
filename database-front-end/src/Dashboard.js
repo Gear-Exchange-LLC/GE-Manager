@@ -26,6 +26,7 @@ function Dashboard() {
     <div className="Dashboard">
       <div className="Header">
         <h1>Gear Exchange Database</h1>
+        <input type="button" value="Create Item" className="Button" />
       </div>
       <div className="CardWrapper">
         {data.sort(custom_sort).reverse().map(function (value, index, array) {
@@ -35,6 +36,7 @@ function Dashboard() {
             return (
                 <div className="Card" key={index}>
                     <h1 className="Card-Title">{`${value.firstName} ${value.lastName}`}</h1>
+                    <h2 className="Card-Num of Items">3 Items</h2>
                 </div>
             )
         })}
