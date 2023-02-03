@@ -33,6 +33,11 @@ io.on('connection', async (socket) => {
 
     io.emit("update", await read())
   })
+
+  socket.on("get-data", () => {
+
+    io.to(socket.id).emit("data", JSON.parse(fs.readFileSync("db.json")).items)
+  })
 });
 
 server.listen(3001, () => {

@@ -3,7 +3,11 @@ import './App.css';
 import socketIOClient from "socket.io-client";
 import { createBrowserHistory } from "@remix-run/router";
 import { SocketContext } from "./context/SocketContext";
-import Table from "./Table";
+import ReactTable from "./Table";
+import { AgGridReact } from 'ag-grid-react';
+
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 
 function CreateItem() {
@@ -22,18 +26,8 @@ function CreateItem() {
   const [PONum, setPONum] = React.useState();
   const [items, setItems] = React.useState([]);
 
-
-  function setItemsf(data) {
-    
-    setItems(JSON.stringify(data))
-
-    console.log(items)
-  }
-
   function createItem() {
     const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, middleName: MiddleName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, poNum: PONum, items: items }
-
-    console.log(value);
 
     socket.emit("create-item", JSON.stringify(value))
   }
@@ -101,7 +95,7 @@ function CreateItem() {
         </div>
         <input type="button" className='submitButton' value="Submit" onClick={() => createItem()} />
       </div>
-      <Table setItems={setItemsf}/>
+      <ReactTable setItems={setItems} />
     </div>
   );
 }

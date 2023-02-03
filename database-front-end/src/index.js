@@ -22,7 +22,7 @@ root.render(
     <BrowserRouter>  
       <Routes>
         <Route path='/create-item' exact={true} element={<CreateItem />} />
-        <Route path="/card" element={<CardPage />} />
+        <Route path="/card/:id" element={<CardPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
       </Routes>
