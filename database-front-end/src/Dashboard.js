@@ -26,20 +26,26 @@ function Dashboard() {
     <div className="Dashboard">
       <div className="Header">
         <h1>Gear Exchange Database</h1>
-        <input type="button" value="Create Item" className="Button" />
+        <a className="Button" href="/create-item">Create Item</a>
       </div>
-      <div className="CardWrapper">
-        {data.sort(custom_sort).reverse().map(function (value, index, array) {
+      <div className="DashWrapper">
+        <div className="CardWrapper">
+          {data.sort(custom_sort).reverse().map(function (value, index, array) {
 
-            value = JSON.parse(value)
+              value = JSON.parse(value)
 
-            return (
-                <div className="Card" key={index}>
-                    <h1 className="Card-Title">{`${value.firstName} ${value.lastName}`}</h1>
-                    <h2 className="Card-Num of Items">3 Items</h2>
-                </div>
-            )
-        })}
+              return (
+                  <div className="Card" key={index}>
+                      <h1 className="Card-Title">Parker Thornton</h1>
+                      <h2 className="ItemsNum">3 Items</h2>
+                      <p className="Card-Date">Date Created: 01/11/2023</p>
+                  </div>
+              )
+          })}
+        </div>
+        <div className="CardInfo">
+          <h1>Card Info</h1>
+        </div>
       </div>
     </div>
   );
