@@ -111,7 +111,7 @@
   align-items: flex-start;
   justify-content: center;
   width: calc(50vw - 40px);
-  min-width: ;
+  min-width: calc(50vw - 40px);
   margin-left: 20px;
   height: calc(100vh - 70px);
   overflow-y: scroll;
