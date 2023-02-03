@@ -4,6 +4,10 @@
   height: 100vh;
 }
 
+p {
+  color: white;
+}
+
 .InputWrapper {
   display: flex;
   flex-direction: row;
@@ -53,9 +57,9 @@
   background-color: rgb(158, 0, 158);
 }
 
-* {
+/* * {
   color: white;
-}
+} */
 
 
 /* Dashboard Styles */

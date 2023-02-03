@@ -36,9 +36,9 @@ function Dashboard() {
 
               return (
                   <div className="Card" key={index}>
-                      <h1 className="Card-Title">Parker Thornton</h1>
+                      <h1 className="Card-Title">{value.firstName} {value.lastName}</h1>
                       <h2 className="ItemsNum">3 Items</h2>
-                      <p className="Card-Date">Date Created: 01/11/2023</p>
+                      <p className="Card-Date">Date Created: {new Date(value.date).getMonth() + 1}</p>
                   </div>
               )
           })}
