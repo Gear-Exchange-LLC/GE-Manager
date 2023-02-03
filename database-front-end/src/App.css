@@ -66,6 +66,12 @@
     height: 100vh;
 }
 
+.DashWrapper {
+  display: flex;
+  justify-content: flex-start;
+  /* align-items: center; */
+}
+
 .Header {
   height: 70px;
   display: flex;
@@ -91,6 +97,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.12s ease-in-out;
+  text-decoration: none;
 }
 
 .Button:hover, .Button:target {
@@ -102,7 +109,9 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
-  width: calc(100vw - 40px);
+  justify-content: center;
+  width: calc(50vw - 40px);
+  min-width: ;
   margin-left: 20px;
   height: calc(100vh - 70px);
   overflow-y: scroll;
@@ -129,11 +138,14 @@
 
 .Card {
   background-color: #1e2127;
-  width: 250px;
-  height: 350px;
-  min-height: 350px;
+  width: 100%;
+  max-width: 1000px;
+  height: 150px;
+  min-height: 150px;
   border-radius: 10px;
   margin: 5px;
+
+  text-align: left;
 
   cursor: pointer;
 
@@ -142,6 +154,17 @@
 
 .Card:hover {
   background-color: #181a1f;
+}
+
+.Card-Title {
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.ItemsNum {
+  font-size: 15px;
+  margin-left: 10px;
+  color: rgb(204, 204, 204);
 }
 
 /* Card Page */
