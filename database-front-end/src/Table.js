@@ -29,13 +29,16 @@ const TableCheck = props => {
 }
 
 const StyledTable = styled.table`
-  width: 100%;
+  width: 100vw;
+  display: block;
+  max-width: 100vw;
   border-collapse: collapse;
   background-color: white;
+  overflow: scroll;
   th,
   td {
-    width: 30%;
-    text-align: center;
+    width: 10%;
+    text-align: left;
     border: 1px solid lightgray;
     padding: 5px;
   }
@@ -120,6 +123,7 @@ const ReactTable = React.memo(props => {
   const [data, setData] = React.useState(initialData);
   const resetData = () => setData(initialData);
   const addRow = () => setData(old => [...old, { make: "", model: "", total: true }]);
+  const removeRow = () => setData(data.slice(0,-1));
   const updateData = (rowIndex, columnID, value) => {
     console.log(value)
     setData(oldData =>
@@ -164,9 +168,12 @@ const ReactTable = React.memo(props => {
             );
           })}
           <tr>
-            <td colSpan={3}>
+            <td colSpan={11}>
               <button type="button" onClick={addRow}>
                 Add Row
+              </button>
+              <button type="button" onClick={removeRow}>
+                Remove Row
               </button>
               <button type="button" onClick={resetData}>
                 Reset Table

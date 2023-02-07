@@ -29,7 +29,7 @@ function CardPage() {
 
     return (
     <div className="CardPage">
-      <h1 style={{color: "black"}}>{data.firstName}</h1>
+      <h1 style={{color: "black"}}>{data.firstName} {data.lastName} - Items</h1>
     </div>
   );
 }

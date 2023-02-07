@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
 import './App.css';
-import socketIOClient from "socket.io-client";
-import { createBrowserHistory } from "@remix-run/router";
 import { SocketContext } from "./context/SocketContext";
 import ReactTable from "./Table";
-import { AgGridReact } from 'ag-grid-react';
-
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 
 function CreateItem() {
