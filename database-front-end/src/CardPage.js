@@ -99,8 +99,21 @@ function CardPage() {
         <a className="Button" href="/">Back to Dashboard</a>
       </div>
       <div className="dataWrapper">
-        <h1>Name: {data.firstName} {data.lastName}</h1>
-        <h2>Phone: {formatPhoneNumber(data.phoneNumber)}</h2>
+        <h1>{data.firstName} {data.lastName}</h1>
+        <div>
+          <span>
+            <h2>Phone:</h2>
+            <h2>{formatPhoneNumber(data.phoneNumber)}</h2>
+          </span>
+          <span>
+            <h2>Drivers License:</h2>
+            <h2>{data.driversLicense}</h2>
+          </span>
+          <span>
+            <h2>Transaction ID:</h2>
+            <h2>{data.transactionID}</h2>
+          </span>
+        </div>
       </div>
       <div className="itemWrapper">
         <MaterialReactTable columns={columns} data={data.items} />
