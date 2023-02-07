@@ -34,6 +34,10 @@ function CreateItem() {
 
   return (
     <div className="App">
+      <div className="Header">
+        <h1>Gear Exchange Database</h1>
+        <a className="Button" href="/">Back to Dashboard</a>
+      </div>
       <div className="InputWrapper">
         <div className="InputItem">
             <p>Date:</p>

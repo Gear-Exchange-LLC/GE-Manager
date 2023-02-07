@@ -37,14 +37,11 @@ function Dashboard() {
               return (
                   <div className="Card" onClick={() => window.location.href = `/card/${value.transactionID}`} key={index}>
                       <h1 className="Card-Title">{value.firstName} {value.lastName}</h1>
-                      <h2 className="ItemsNum">3 Items</h2>
+                      <h2 className="ItemsNum">{value.items.length} Items</h2>
                       <p className="Card-Date">Date Created: {new Date(value.date).getMonth() + 1}</p>
                   </div>
               )
           })}
-        </div>
-        <div className="CardInfo">
-          <h1>Card Info</h1>
         </div>
       </div>
     </div>
