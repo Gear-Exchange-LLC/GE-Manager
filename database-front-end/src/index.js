@@ -15,17 +15,27 @@ import {
   Navigate,
 } from "react-router-dom";
 import { SocketContext, socket } from './context/SocketContext';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+
+import theme from './theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <SocketContext.Provider value={socket}>
-    <BrowserRouter>  
-      <Routes>
-        <Route path='/create-item' exact={true} element={<CreateItem />} />
-        <Route path="/card/:id" element={<CardPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
-      </Routes>
-    </BrowserRouter>
-  </SocketContext.Provider>
+  <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline enableColorScheme />
+      <SocketContext.Provider value={socket}>
+        <BrowserRouter>  
+          <Routes>
+            <Route path='/create-item' exact={true} element={<CreateItem />} />
+            <Route path="/card/:id" element={<CardPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
+          </Routes>
+        </BrowserRouter>
+      </SocketContext.Provider>
+    </ThemeProvider>
+  </LocalizationProvider>
 );

@@ -5,14 +5,36 @@ const http = require('http');
 var cors = require("cors");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+require('dotenv').config()
 
 const { write, read, add } = require("./db-manager")
 
+const { Client, Environment, ApiError } = require('square')
+
+// Square Client
+const client = new Client({
+  accessToken: process.env.SQUARE_ACCESS_TOKEN,
+  environment: Environment.Sandbox
+});
+
+// Socket Server
 const io = new Server(server, {
     cors: {
         origin: '*',
     }
 });
+
+async function test() {
+  try {
+    const response = await client.paymentsApi.listPayments();
+  
+    console.log(response.result);
+  } catch(error) {
+    console.log(error);
+  }
+}
+
+test()
 
 app.use(cors())
 

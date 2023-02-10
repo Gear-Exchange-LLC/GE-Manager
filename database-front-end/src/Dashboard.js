@@ -1,3 +1,4 @@
+import { Box, AppBar, Toolbar, Typography, Button, Container, Card, CardHeader, CardContent } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import './App.css';
 import { SocketContext } from "./context/SocketContext";
@@ -23,28 +24,45 @@ function Dashboard() {
       })
 
     return (
-    <div className="Dashboard">
-      <div className="Header">
-        <h1>Gear Exchange Database</h1>
-        <a className="Button" href="/create-item">Create Item</a>
-      </div>
-      <div className="DashWrapper">
-        <div className="CardWrapper">
+    <Box sx={{
+      /* background-color: #282c34; */
+      height: "100vh"
+    }}>
+      <Box>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
+              Gear Exchange DB Manager
+            </Typography>
+            <Button color="secondary" variant="contained" onClick={() => window.location.href = "/create-item"}>Create Item</Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%"
+      }}>
           {data.sort(custom_sort).reverse().map(function (value, index, array) {
 
               value = JSON.parse(value)
 
               return (
-                  <div className="Card" onClick={() => window.location.href = `/card/${value.transactionID}`} key={index}>
-                      <h1 className="Card-Title">{value.firstName} {value.lastName}</h1>
-                      <h2 className="ItemsNum">{value.items.length} Items</h2>
-                      <p className="Card-Date">Date Created: {new Date(value.date).getMonth() + 1}</p>
-                  </div>
+                  <Card sx={{margin: 2, maxWidth: 600, width: "100%", cursor: "pointer", 
+                  ':hover': {
+                    boxShadow: 5,
+                  }, 
+                  }} onClick={() => window.location.href = "/card/" + value.transactionID}>
+                      <CardContent>
+                        <Typography variant="h4">{value.firstName} {value.lastName}</Typography>
+                        <Typography variant="h7" sx={{ mb: 1.5 }} >{value.items.length} Items <br /></Typography>
+                      </CardContent>
+                  </Card>
               )
-          })}
-        </div>
-      </div>
-    </div>
+          })} 
+      </Box>
+    </Box>
   );
 }
 
