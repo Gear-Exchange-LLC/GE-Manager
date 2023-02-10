@@ -9,7 +9,8 @@ require('dotenv').config()
 
 const { write, read, add } = require("./db-manager")
 
-const { Client, Environment, ApiError } = require('square')
+const { Client, Environment, ApiError } = require('square');
+const { create } = require('domain');
 
 // Square Client
 const client = new Client({
@@ -24,17 +25,41 @@ const io = new Server(server, {
     }
 });
 
-async function test() {
+
+async function createSquareItem() {
   try {
-    const response = await client.paymentsApi.listPayments();
+    const response = await client.catalogApi.upsertCatalogObject({
+      idempotencyKey: 'hiuehuiewhfuihufhu',
+      object: {
+        type: 'ITEM',
+        id: '#34weds',
+        itemData: {
+          name: 'Piaosoid',
+          variations: [
+            {
+              type: 'ITEM_VARIATION',
+              id: '#aojisdhios',
+              itemVariationData: {
+                sku: '123423',
+                pricingType: 'FIXED_PRICING',
+                ordinal: 1,
+                priceMoney: {
+                  amount: 20000,
+                  currency: 'USD'
+                },
+                trackInventory: true
+              }
+            }
+          ]
+        }
+      }
+    });
   
     console.log(response.result);
   } catch(error) {
     console.log(error);
   }
 }
-
-test()
 
 app.use(cors())
 
