@@ -1,9 +1,11 @@
-import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel } from "@mui/material";
+import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
 import './App.css';
 import { SocketContext } from "./context/SocketContext";
 import ReactTable from "./Table";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import dayjs from "dayjs"
 
@@ -15,9 +17,9 @@ function CreateItem() {
   const socket = useContext(SocketContext);
 
   const [date, setDate] = React.useState(new Date().toISOString().split("T")[0]);
-  const [FirstName, setFirstName] = React.useState();
-  const [MiddleName, setMiddleName] = React.useState();
-  const [LastName, setLastName] = React.useState();
+  const [FirstName, setFirstName] = React.useState("");
+  const [MiddleName, setMiddleName] = React.useState("");
+  const [LastName, setLastName] = React.useState("");
   const [DriversLicenseNum, setDriversLicenseNum] = React.useState();
   const [PhoneNumber, setPhoneNumber] = React.useState();
   const [StoreCredit, setStoreCredit] = React.useState(false);
@@ -26,7 +28,19 @@ function CreateItem() {
   const [PONum, setPONum] = React.useState();
   const [items, setItems] = React.useState([]);
 
+  const [openSnack, setOpenSnack] = React.useState(false);
+
   function createItem() {
+
+    if (FirstName === "" || MiddleName === "" || LastName === "" || items === []) {
+
+      console.log("Please Fill Out")
+
+      setOpenSnack(true);
+
+      return;
+    }
+
     const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, middleName: MiddleName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, poNum: PONum, items: items }
 
     socket.emit("create-item", JSON.stringify(value))
@@ -42,9 +56,30 @@ function CreateItem() {
     dayjs('2014-08-18T21:11:54'),
   );
 
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnack(false);
+  };
+
   const handleChange = (newValue) => {
     setValue(newValue);
   };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
 
   return (
     <Box sx={{
@@ -98,8 +133,15 @@ function CreateItem() {
         <Box sx={{ width: 200 }}>
           <ReactTable setItems={setItems} />
         </Box>
-        <Button variant="contained" size="large" sx={{width: 200}} onClick={() => createItem()}>Submit</Button>
+        <Button variant="contained" color="primary" size="large" sx={{width: 200}} onClick={() => createItem()}>Submit</Button>
       </Box>
+      <Snackbar
+        open={openSnack}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="Please Fill In All Fields"
+        action={action}
+      />
     </Box>
   );
 
