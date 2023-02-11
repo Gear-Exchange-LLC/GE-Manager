@@ -73,6 +73,11 @@ const ReactTable = React.memo(props => {
         Cell: TableInput
       },
       {
+        Header: "Stock",
+        accessor: "stock",
+        Cell: TableInput
+      },
+      {
         Header: "Percent",
         accessor: "percent",
         Cell: TableInput
@@ -112,6 +117,7 @@ const ReactTable = React.memo(props => {
       included: "",
       condition: "",
       x: "",
+      stock: 1,
       percent: "",
       storeCredit: "",
       purchaseAmount: "",

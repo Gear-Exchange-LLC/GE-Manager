@@ -1,4 +1,4 @@
-import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar } from "@mui/material";
+import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar, CircularProgress } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
 import './App.css';
@@ -30,6 +30,8 @@ function CreateItem() {
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
+  const [loading, setLoading] = React.useState(false);
+
   function createItem() {
 
     if (FirstName === "" || MiddleName === "" || LastName === "" || items === []) {
@@ -43,12 +45,15 @@ function CreateItem() {
 
     const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, middleName: MiddleName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, poNum: PONum, items: items }
 
+    setLoading(true);
+
     socket.emit("create-item", JSON.stringify(value))
   }
 
   useEffect(() => {
     socket.on("created", (socket) => {
         window.location.href = "/dashboard"
+        setLoading(false);
     })
   })
 
@@ -133,7 +138,22 @@ function CreateItem() {
         <Box sx={{ width: 200 }}>
           <ReactTable setItems={setItems} />
         </Box>
-        <Button variant="contained" color="primary" size="large" sx={{width: 200}} onClick={() => createItem()}>Submit</Button>
+        <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200}} onClick={() => createItem()}>
+          Submit
+          {loading && (
+            <CircularProgress
+              size={24}
+              sx={{
+                color: "green",
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                marginTop: '-12px',
+                marginLeft: '-12px',
+              }}
+            />
+          )}
+        </Button>
       </Box>
       <Snackbar
         open={openSnack}

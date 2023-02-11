@@ -7,6 +7,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 require('dotenv').config()
 
+const crypto = require('crypto');
+
 const { write, read, add } = require("./db-manager")
 
 const { Client, Environment, ApiError } = require('square');
@@ -26,39 +28,72 @@ const io = new Server(server, {
 });
 
 
-async function createSquareItem() {
-  try {
-    const response = await client.catalogApi.upsertCatalogObject({
-      idempotencyKey: 'hiuehuiewhfuihufhu',
-      object: {
-        type: 'ITEM',
-        id: '#34weds',
-        itemData: {
-          name: 'Piaosoid',
-          variations: [
-            {
-              type: 'ITEM_VARIATION',
-              id: '#aojisdhios',
-              itemVariationData: {
-                sku: '123423',
-                pricingType: 'FIXED_PRICING',
-                ordinal: 1,
-                priceMoney: {
-                  amount: 20000,
-                  currency: 'USD'
-                },
-                trackInventory: true
-              }
-            }
-          ]
-        }
-      }
-    });
+async function createSquareItem(data) {
+
+  data.items.map(async (item) => {
+    var make = item.make;
+    var model = item.model;
+
+    var price = item.x;
+
+    if (!price.includes(".")) {
+      price = price + "00"
+    }
+    else {
+      price = price.split(".")[0] + price.split(".")[1]
+    }
   
-    console.log(response.result);
-  } catch(error) {
-    console.log(error);
-  }
+    var stock = item.stock;
+
+    var sku = item.sku;
+  
+    try {
+      const objectResponse = await client.catalogApi.upsertCatalogObject({
+        idempotencyKey: crypto.randomUUID(),
+        object: {
+          type: 'ITEM',
+          id: '#create-item',
+          itemData: {
+            name: `(${sku}) ${make} ${model}`,
+            variations: [
+              {
+                type: 'ITEM_VARIATION',
+                id: '#create-item-varient',
+                itemVariationData: {
+                  sku: sku,
+                  pricingType: 'FIXED_PRICING',
+                  priceMoney: {
+                    amount: price,
+                    currency: 'USD'
+                  },
+                  trackInventory: true
+                }
+              }
+            ]
+          }
+        }
+      });
+  
+      const stockResponse = await client.inventoryApi.batchChangeInventory({
+        idempotencyKey: crypto.randomUUID(),
+        changes: [
+          {
+            type: 'PHYSICAL_COUNT',
+            physicalCount: {
+              catalogObjectId: objectResponse.result.catalogObject.itemData.variations[0].id,
+              state: 'IN_STOCK',
+              locationId: objectResponse.result.catalogObject.itemData.variations[0].itemVariationData.locationOverrides[0].locationId,
+              quantity: stock.toString(),
+              occurredAt: new Date().toISOString()
+            }
+          }
+        ]
+      });
+  
+    } catch(error) {
+      console.log(error);
+    }
+  })
 }
 
 app.use(cors())
@@ -74,6 +109,9 @@ io.on('connection', async (socket) => {
   io.to(socket.id).emit("update", JSON.parse(fs.readFileSync("db.json")))
 
   socket.on("create-item", async (value) => {
+    console.log(value);
+    await createSquareItem(JSON.parse(value));
+    
     add(value)
 
     io.to(socket.id).emit("created");
