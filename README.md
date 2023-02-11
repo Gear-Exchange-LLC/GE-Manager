@@ -23,3 +23,9 @@ https://developer.squareup.com/docs/sdks/nodejs
 ```
 https://developer.squareup.com/
 ```
+
+# Sample .env File
+
+```
+SQUARE_ACCESS_TOKEN=<Your Square Token>
+```
