@@ -78,6 +78,10 @@ function CardPage() {
           header: 'Sell Check',
           type: "boolean"
         },
+        {
+          accessorKey: "complete",
+          header: "Is Complete"
+        }
       ],
       [],
     );
@@ -90,6 +94,10 @@ function CardPage() {
         return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
       }
       return null;
+    }
+
+    var tableOptions = {
+      rowStyle: rowData => console.log(rowData)
     }
 
     return (
@@ -150,7 +158,7 @@ function CardPage() {
           </Box>
         </Box>
         <Box className="itemWrapper">
-          <MaterialReactTable columns={columns} data={data.items} />
+          <MaterialReactTable columns={columns} data={data.items} options={tableOptions}/>
         </Box>
         <Stack direction="row" spacing={2} justifyContent="end" paddingRight={2} width="100%">
           <Button color="primary" variant="outlined" sx={{ width: 200 }} onClick={() => console.log("edit")}>Edit</Button>

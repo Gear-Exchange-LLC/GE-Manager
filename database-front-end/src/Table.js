@@ -123,7 +123,8 @@ const ReactTable = React.memo(props => {
       purchaseAmount: "",
       sku: "",
       storeCreditCheck: false,
-      sellCheck: false
+      sellCheck: false,
+      complete: false
     },
   ];
   const [data, setData] = React.useState(initialData);
