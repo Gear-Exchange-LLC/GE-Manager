@@ -3,9 +3,11 @@ import { DatePicker } from "@mui/x-date-pickers";
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
 import './App.css';
 import { SocketContext } from "./context/SocketContext";
-import ReactTable from "./Table";
+import FullFeaturedCrudGrid from "./Table";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+
+import EditTable from "material-ui-table-edit"
 
 import dayjs from "dayjs"
 
@@ -86,6 +88,11 @@ function CreateItem() {
     </React.Fragment>
   );
 
+  const inputStyle = {
+    width: "400px",
+
+  }
+
   return (
     <Box sx={{
       height: "100vh"
@@ -100,8 +107,11 @@ function CreateItem() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Box>
-        <Box className="InputItem">
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column"
+      }}>
+        <Box className="InputItem" sx={inputStyle} >
             <DesktopDatePicker
               label="Date"
               inputFormat="mm/dd/yyyy"
@@ -111,34 +121,34 @@ function CreateItem() {
             />
           </Box>
         <Box className="InputItem">
-          <TextField id="firstNameInput" label="First Name" variant="outlined" onChange={(event) => { setFirstName(event.target.value) }} />
+          <TextField sx={inputStyle} id="firstNameInput" label="First Name" variant="outlined" onChange={(event) => { setFirstName(event.target.value) }} />
         </Box>
         <Box className="InputItem">
-          <TextField id="middleNameInput" label="Middle Name" variant="outlined" onChange={(event) => { setMiddleName(event.target.value) }} />
+          <TextField sx={inputStyle} id="middleNameInput" label="Middle Name" variant="outlined" onChange={(event) => { setMiddleName(event.target.value) }} />
         </Box>
         <Box className="InputItem">
-          <TextField id="lastNameInput" label="Last Name" variant="outlined" onChange={(event) => { setLastName(event.target.value) }} />
+          <TextField sx={inputStyle} id="lastNameInput" label="Last Name" variant="outlined"  onChange={(event) => { setLastName(event.target.value) }} />
         </Box>
         <Box className="InputItem">
-          <TextField id="driversLicenseInput" label="Drivers License #" variant="outlined" onChange={(event) => { setDriversLicenseNum(event.target.value) }} />
+          <TextField sx={inputStyle} id="driversLicenseInput" label="Drivers License #" variant="outlined" onChange={(event) => { setDriversLicenseNum(event.target.value) }} />
         </Box>
         <Box className="InputItem">
-          <TextField id="phoneNumberInput" label="Phone Number" variant="outlined" onChange={(event) => { setPhoneNumber(event.target.value) }} />
+          <TextField sx={inputStyle} id="phoneNumberInput" label="Phone Number" variant="outlined" onChange={(event) => { setPhoneNumber(event.target.value) }} />
         </Box>
         <FormGroup>
           <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setStoreCredit(true) } else { setStoreCredit(false) }}} defaultChecked />} label="Store Credit" />
           <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setSellCheck(true) } else { setSellCheck(false) }}} />} label="Sell" />
         </FormGroup>
         <Box className="InputItem">
-          <TextField id="transactionIDInput" label="Transaction ID" variant="outlined" onChange={(event) => { setTransactionID(event.target.value) }} />
+          <TextField sx={inputStyle} id="transactionIDInput" label="Transaction ID" variant="outlined" onChange={(event) => { setTransactionID(event.target.value) }} />
         </Box>
         <Box className="InputItem">
-          <TextField id="poInput" label="PO #" variant="outlined" onChange={(event) => { setPONum(event.target.value) }} />
+          <TextField sx={inputStyle} id="poInput" label="PO #" variant="outlined" onChange={(event) => { setPONum(event.target.value) }} />
         </Box>
-        <Box sx={{ width: 200 }}>
-          <ReactTable setItems={setItems} />
+        <Box sx={{ width: "50vw" }}>
+          <FullFeaturedCrudGrid setItems={setItems} />
         </Box>
-        <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200}} onClick={() => createItem()}>
+        {/* <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200}} onClick={() => createItem()}>
           Submit
           {loading && (
             <CircularProgress
@@ -153,7 +163,7 @@ function CreateItem() {
               }}
             />
           )}
-        </Button>
+        </Button> */}
       </Box>
       <Snackbar
         open={openSnack}
