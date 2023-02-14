@@ -7,6 +7,11 @@ React Table Link:
 https://codesandbox.io/s/react-form-with-react-table-qjwmf?from-embed=&file=/src/index.js:0-6876
 ```
 
+Data Grid Docs:
+```
+https://mui.com/x/react-data-grid/row-updates/
+```
+
 # Square Dashboard Links:
 
 ### Dashboard:
