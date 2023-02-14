@@ -3,7 +3,6 @@ import { DatePicker } from "@mui/x-date-pickers";
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
 import './App.css';
 import { SocketContext } from "./context/SocketContext";
-import FullFeaturedCrudGrid from "./Table";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -12,6 +11,7 @@ import EditTable from "material-ui-table-edit"
 import dayjs from "dayjs"
 
 import { DesktopDatePicker } from "@mui/x-date-pickers";
+import ReactTable from "./Table";
 
 
 function CreateItem() {
@@ -146,9 +146,9 @@ function CreateItem() {
           <TextField sx={inputStyle} id="poInput" label="PO #" variant="outlined" onChange={(event) => { setPONum(event.target.value) }} />
         </Box>
         <Box sx={{ width: "50vw" }}>
-          <FullFeaturedCrudGrid setItems={setItems} />
+          <ReactTable setItems={setItems} />
         </Box>
-        {/* <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200}} onClick={() => createItem()}>
+        <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200}} onClick={() => createItem()}>
           Submit
           {loading && (
             <CircularProgress
@@ -163,7 +163,7 @@ function CreateItem() {
               }}
             />
           )}
-        </Button> */}
+        </Button>
       </Box>
       <Snackbar
         open={openSnack}

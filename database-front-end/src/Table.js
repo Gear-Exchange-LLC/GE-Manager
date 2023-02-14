@@ -1,144 +1,209 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Select from '@mui/material/Select';
-import { DataGrid, useGridApiContext, useGridApiRef } from '@mui/x-data-grid';
-import { Button, TextField } from '@mui/material';
+import React from "react";
+import ReactDOM from "react-dom";
+import styled, { createGlobalStyle } from "styled-components";
+import { useForm, useField, splitFormProps } from "react-form";
+import { useTable } from "react-table";
+import { Button, Checkbox, TextField, InputAdornment } from "@mui/material";
 
-var rows = [
-  {
-    id: 1,
-    name: 'Olivier',
-    role: 'Back-end Developer',
-  },
-  {
-    id: 2,
-    name: 'Danail',
-    role: 'UX Designer',
-  },
-  {
-    id: 3,
-    name: 'Matheus',
-    role: 'Front-end Developer',
-  },
-];
-
-function SelectEditInputCell(props) {
-  const { id, value, field } = props;
-  const apiRef = useGridApiContext();
-
-  const handleChange = async (event) => {
-    await apiRef.current.setEditCellValue({ id, field, value: event.target.value });
-    // apiRef.current.stopCellEditMode({ id, field });
-
-    rows.map((row) => {
-      if (row.id == id) {
-        row.role = value;
-      }
-    })
-  };
-
-  return (
-    <TextField
-      value={value}
-      onChange={handleChange}
-      size="small"
-      sx={{height: 1}}
-      autoFocus
-    />
-    // <Select
-    //   value={value}
-    //   onChange={handleChange}
-    //   size="small"
-    //   sx={{ height: 1 }}
-    //   native
-    //   autoFocus
-    // >
-    //   <option>Back-end Developer</option>
-    //   <option>Front-end Developer</option>
-    //   <option>UX Designer</option>
-    // </Select>
-  );
-}
-
-SelectEditInputCell.propTypes = {
-  /**
-   * The column field of the cell that triggered the event.
-   */
-  field: PropTypes.string.isRequired,
-  /**
-   * The grid row id.
-   */
-  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  /**
-   * The cell value.
-   * If the column has `valueGetter`, use `params.row` to directly access the fields.
-   */
-  value: PropTypes.any,
+const TableInput = props => {
+  const { column, row, cell, updateData } = props;
+  const onChange = e => updateData(row.index, column.id, e.target.value);
+  return <TextField value={cell.value} label={column.Header} onChange={onChange} />;
 };
 
-const renderSelectEditInputCell = (params) => {
-  return <SelectEditInputCell {...params} />;
+const TableNum = props => {
+  const { column, row, cell, updateData } = props;
+  const onChange = e => updateData(row.index, column.id, e.target.value);
+  return <TextField type="number" value={cell.value} label={column.Header} onChange={onChange} />;
 };
 
-export default function AutoStopEditComponent() {
-  
-  const apiRef2 = useGridApiRef();
+const TablePrice = props => {
+  const { column, row, cell, updateData } = props;
+  const onChange = e => updateData(row.index, column.id, e.target.value);
+  return <TextField label={column.Header} startAdornment={<InputAdornment position="start">$</InputAdornment>} value={cell.value} onChange={onChange} />;
+};
 
-  const [rows, setRows] = React.useState([
-    {
-      id: 1,
-      name: 'Olivier',
-      role: 'Back-end Developer',
-    },
-    {
-      id: 2,
-      name: 'Danail',
-      role: 'UX Designer',
-    },
-    {
-      id: 3,
-      name: 'Matheus',
-      role: 'Front-end Developer',
-    },
-  ]);
+const TableCheck = props => {
+  const { column, row, cell, updateData } = props;
 
-  const addRow = async () => {
-    var newVal = {
-      id: rows.length + 1,
-      name: '',
-      role: '',
-    }
+  if (cell.value == "true") {
+    cell.value = true;
+  } else {
+    cell.value = false
+  }
+  const onCheck = e => updateData(row.index, column.id, e.target.checked);
 
-    apiRef2.current.updateRows([newVal])
+  if (props.value) {
+    return <Checkbox value={props.value} onChange={onCheck} />;
+  } else {
+    return <Checkbox value={props.value} onChange={onCheck} />;
   }
 
-
-
-  return (
-    <div style={{ height: 300, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        experimentalFeatures={{ newEditingApi: true }}
-        apiRef={apiRef2}
-      />
-      <Button variant='contained' onClick={() => addRow()}>Add Row</Button>
-      <Button variant='contained' onClick={() => console.log(rows)}>Test</Button>
-    </div>
-  );
 }
 
-const columns = [
-  {
-    field: 'name',
-    headerName: 'Name',
-    width: 120,
-  },
-  {
-    field: 'role',
-    headerName: 'Role',
-    renderEditCell: renderSelectEditInputCell,
-    editable: true,
-    width: 180,
-  },
-];
+const StyledTable = styled.table`
+  width: 100vw;
+  display: block;
+  max-width: 100vw;
+  border-collapse: collapse;
+  background-color: white;
+  overflow: scroll;
+  th,
+  td {
+    width: 10%;
+    text-align: left;
+    border: 1px solid lightgray;
+    padding: 5px;
+  }
+`;
+const ReactTable = React.memo(props => {
+  const { setItems } = props;
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Make",
+        accessor: "make",
+        Cell: TableInput
+      },
+      {
+        Header: "Model",
+        accessor: "model",
+        Cell: TableInput
+      },
+      {
+        Header: "w/Included",
+        accessor: "included",
+        Cell: TableInput
+      },
+      {
+        Header: "Condition",
+        accessor: "condition",
+        Cell: TableInput
+      },
+      {
+        Header: "X",
+        accessor: "x",
+        Cell: TablePrice
+      },
+      {
+        Header: "Stock",
+        accessor: "stock",
+        Cell: TableInput
+      },
+      {
+        Header: "Percent",
+        accessor: "percent",
+        Cell: TableInput
+      },
+      {
+        Header: "Store Credit Amount",
+        accessor: "storeCredit",
+        Cell: TableInput
+      },
+      {
+        Header: "Purchase Amount",
+        accessor: "purchaseAmount",
+        Cell: TableInput
+      },
+      {
+        Header: "SKU",
+        accessor: "sku",
+        Cell: TableInput
+      },
+      {
+        Header: "Store Credit",
+        accessor: "storeCreditCheck",
+        Cell: TableCheck
+      },
+      {
+        Header: "Sell",
+        accessor: "sellCheck",
+        Cell: TableCheck  
+      }
+    ],
+    []
+  );
+  const initialData = [
+    {
+      make: "",
+      model: "",
+      included: "",
+      condition: "",
+      x: "",
+      stock: 1,
+      percent: "",
+      storeCredit: "",
+      purchaseAmount: "",
+      sku: "",
+      storeCreditCheck: false,
+      sellCheck: false,
+      complete: false
+    },
+  ];
+  const [data, setData] = React.useState(initialData);
+  const resetData = () => setData(initialData);
+  const addRow = () => setData(old => [...old, { make: "", model: "", total: true }]);
+  const removeRow = () => setData(data.slice(0,-1));
+  const updateData = (rowIndex, columnID, value) => {
+    console.log(value)
+    setData(oldData =>
+      oldData.map((row, index) => {
+        if (index === rowIndex) {
+          return {
+            ...oldData[rowIndex],
+            [columnID]: value
+          };
+        }
+        return row;
+      })
+    );
+  };
+  const table = useTable({ columns, data, updateData });
+  const { getTableProps, headerGroups, rows, prepareRow } = table;
+  const tableSum = rows.reduce((sum, row) => sum + row.values.total, 0);
+  setItems(data)
+  return (
+    <>
+      <label>Itemized Costs:</label>
+      <br />
+      <StyledTable {...getTableProps()}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {rows.map(row => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => (
+                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                ))}
+              </tr>
+            );
+          })}
+          <tr>
+            <td colSpan={11}>
+              <Button variant="outlined" sx={{marginRight: 2}} onClick={addRow}>
+                Add Row
+              </Button>
+              <Button variant="outlined" sx={{marginRight: 2}} onClick={removeRow}>
+                Remove Row
+              </Button>
+              <Button variant="outlined" sx={{marginRight: 2}} onClick={resetData}>
+                Reset Table
+              </Button>
+            </td>
+          </tr>
+        </tbody>
+      </StyledTable>
+    </>
+  );
+});
+
+export default ReactTable;
