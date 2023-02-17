@@ -13,9 +13,9 @@ function Dashboard() {
     const [data, setData] = React.useState([]);
 
     useEffect(() => {
-        socket.on("update", (socket) => {
-            console.log(socket.items)
-            setData(socket.items)
+        socket.on("update", (data) => {
+            console.log(data.items)
+            setData(data.items)
         })
         socket.on("connect", (value) => {
           console.log(socket.id)

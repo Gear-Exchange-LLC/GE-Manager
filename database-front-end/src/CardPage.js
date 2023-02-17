@@ -184,7 +184,7 @@ function CardPage() {
           </TableContainer>
         </Box>
         <Stack direction="row" spacing={2} justifyContent="end" paddingRight={0} width="90vw" marginTop={2} marginLeft={"5vw"}>
-          <Button color="primary" variant="outlined" sx={{ width: 200 }} onClick={() => console.log("edit")}>Edit {editLoading && (
+          {/* <Button color="primary" variant="outlined" sx={{ width: 200 }} onClick={() => console.log("edit")}>Edit {editLoading && (
                 <CircularProgress
                   size={24}
                   sx={{
@@ -195,7 +195,7 @@ function CardPage() {
                     marginTop: '-12px',
                     marginLeft: '-12px',
                   }}
-                />)}</Button>
+                />)}</Button> */}
           <Button color="primary" variant="contained" sx={{ width: 200 }} disabled={deleteLoading} onClick={() => deleteItem()}>Delete {deleteLoading && (
                 <CircularProgress
                   size={24}

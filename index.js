@@ -148,7 +148,8 @@ io.on('connection', async (socket) => {
         data = JSON.stringify(data);
         fs.writeFileSync('db.json', data);
 
-        await io.emit("delete-item", transactionID);
+        io.emit("delete-item", transactionID);
+        io.emit("update", await read())
       }
     })
   })
