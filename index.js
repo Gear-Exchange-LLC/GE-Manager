@@ -28,6 +28,16 @@ const io = new Server(server, {
     }
 });
 
+try {
+  if (fs.existsSync("./db.json")) {
+    console.log('yes')
+  } else {
+    fs.writeFileSync("db.json", JSON.stringify({items: []}))
+  }
+} catch (err) {
+  console.error(err)
+}
+
 
 async function createSquareItem(data) {
 
