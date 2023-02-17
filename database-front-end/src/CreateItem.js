@@ -1,17 +1,19 @@
 import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar, CircularProgress } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
-import './App.css';
 import { SocketContext } from "./context/SocketContext";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
 import EditTable from "material-ui-table-edit"
 
+import uuid from "react-uuid"
+
 import dayjs from "dayjs"
 
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import ReactTable from "./Table";
+import { display, width } from "@mui/system";
 
 
 function CreateItem() {
@@ -20,15 +22,13 @@ function CreateItem() {
 
   const [date, setDate] = React.useState(new Date().toISOString().split("T")[0]);
   const [FirstName, setFirstName] = React.useState("");
-  const [MiddleName, setMiddleName] = React.useState("");
   const [LastName, setLastName] = React.useState("");
   const [DriversLicenseNum, setDriversLicenseNum] = React.useState();
   const [PhoneNumber, setPhoneNumber] = React.useState();
   const [StoreCredit, setStoreCredit] = React.useState(false);
   const [SellCheck, setSellCheck] = React.useState(false);
-  const [TransactionID, setTransactionID] = React.useState();
-  const [PONum, setPONum] = React.useState();
-  const [items, setItems] = React.useState([]);
+  const [TransactionID, setTransactionID] = React.useState(uuid());
+  const [items, setItems] = React.useState();
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
@@ -36,7 +36,7 @@ function CreateItem() {
 
   function createItem() {
 
-    if (FirstName === "" || MiddleName === "" || LastName === "" || items === []) {
+    if (FirstName === "" || LastName === "" || items === []) {
 
       console.log("Please Fill Out")
 
@@ -45,7 +45,7 @@ function CreateItem() {
       return;
     }
 
-    const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, middleName: MiddleName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, poNum: PONum, items: items }
+    const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, items: items }
 
     setLoading(true);
 
@@ -89,13 +89,12 @@ function CreateItem() {
   );
 
   const inputStyle = {
-    width: "400px",
-
+    width: "200px",
   }
 
   return (
     <Box sx={{
-      height: "100vh"
+      height: "100vh",
     }}>
       <Box>
         <AppBar position="static">
@@ -108,62 +107,83 @@ function CreateItem() {
         </AppBar>
       </Box>
       <Box sx={{
+        width: "100vw",
         display: "flex",
-        flexDirection: "column"
+        justifyContent: "center",
+        marginTop: "20px"
       }}>
-        <Box className="InputItem" sx={inputStyle} >
+        <Box sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "75vw",
+        }}>
+          <Box className="InputItem" sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center"
+          }} >
             <DesktopDatePicker
               label="Date"
               inputFormat="mm/dd/yyyy"
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => <TextField size="small" sx={{ margin: "8px", marginLeft: "0px" }} {...params} />}
               value={value}
               onChange={handleChange}
             />
+            <TextField sx={{margin: "8px", width: "450px"}} size="small" id="transactionIDInput" label="Transaction ID" variant="outlined" disabled  value={TransactionID} onChange={(event) => { setTransactionID(event.target.value) }} />
           </Box>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="firstNameInput" label="First Name" variant="outlined" onChange={(event) => { setFirstName(event.target.value) }} />
+          <Typography variant="h3" marginTop={5} marginBottom={2}>Customer Info:</Typography>
+          <Box sx={{
+            display: "flex",
+            width: "100%",
+            flexWrap: "wrap"
+          }}>
+            <Box marginRight={1} marginTop={1} height="fit-content">
+              <TextField sx={inputStyle} size="small" id="firstNameInput" label="First Name" variant="outlined" onChange={(event) => { setFirstName(event.target.value) }} />
+            </Box>
+            <Box marginRight={1} marginTop={1} height="fit-content">
+              <TextField sx={inputStyle} size="small" id="lastNameInput" label="Last Name" variant="outlined"  onChange={(event) => { setLastName(event.target.value) }} />
+            </Box>
+            <Box marginRight={1} marginTop={1} height="fit-content">
+              <TextField sx={inputStyle} size="small" id="driversLicenseInput" label="Drivers License #" variant="outlined" onChange={(event) => { setDriversLicenseNum(event.target.value) }} />
+            </Box>
+            <Box marginRight={1} marginTop={1} height="fit-content">
+              <TextField sx={inputStyle} size="small" id="phoneNumberInput" label="Phone Number" variant="outlined" onChange={(event) => { setPhoneNumber(event.target.value) }} />
+            </Box>
+          </Box>
+{/* 
+          <FormGroup>
+            <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setStoreCredit(true) } else { setStoreCredit(false) }}} />} label="Store Credit" />
+            <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setSellCheck(true) } else { setSellCheck(false) }}} />} label="Sell" />
+          </FormGroup> */}
+          <Typography variant="h3" margin={0} marginTop={4} >Items:</Typography>
+          <Box sx={{ width: "100%" }}>
+            <ReactTable setItems={setItems} />
+          </Box>
+          <Box sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end"
+          }}>
+            <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200, margin: 3, marginRight: 0}} onClick={() => createItem()}>
+              Submit
+              {loading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    color: "green",
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+                />
+              )}
+            </Button>
+          </Box>
+
         </Box>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="middleNameInput" label="Middle Name" variant="outlined" onChange={(event) => { setMiddleName(event.target.value) }} />
-        </Box>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="lastNameInput" label="Last Name" variant="outlined"  onChange={(event) => { setLastName(event.target.value) }} />
-        </Box>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="driversLicenseInput" label="Drivers License #" variant="outlined" onChange={(event) => { setDriversLicenseNum(event.target.value) }} />
-        </Box>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="phoneNumberInput" label="Phone Number" variant="outlined" onChange={(event) => { setPhoneNumber(event.target.value) }} />
-        </Box>
-        <FormGroup>
-          <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setStoreCredit(true) } else { setStoreCredit(false) }}} defaultChecked />} label="Store Credit" />
-          <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setSellCheck(true) } else { setSellCheck(false) }}} />} label="Sell" />
-        </FormGroup>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="transactionIDInput" label="Transaction ID" variant="outlined" onChange={(event) => { setTransactionID(event.target.value) }} />
-        </Box>
-        <Box className="InputItem">
-          <TextField sx={inputStyle} id="poInput" label="PO #" variant="outlined" onChange={(event) => { setPONum(event.target.value) }} />
-        </Box>
-        <Box sx={{ width: "50vw" }}>
-          <ReactTable setItems={setItems} />
-        </Box>
-        <Button variant="contained" color="primary" disabled={loading} size="large" sx={{width: 200}} onClick={() => createItem()}>
-          Submit
-          {loading && (
-            <CircularProgress
-              size={24}
-              sx={{
-                color: "green",
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginTop: '-12px',
-                marginLeft: '-12px',
-              }}
-            />
-          )}
-        </Button>
       </Box>
       <Snackbar
         open={openSnack}
@@ -174,71 +194,6 @@ function CreateItem() {
       />
     </Box>
   );
-
-  // return (
-  //   <div className="App">
-  //     <div className="Header">
-  //       <h1>Gear Exchange Database</h1>
-  //       <a className="Button" href="/">Back to Dashboard</a>
-  //     </div>
-  //     <div className="InputWrapper">
-  //       <div className="InputItem">
-  //           <p>Date:</p>
-  //           <input type="date" value={`${date}`} onChange={(event) => setDate(event.target.value)}/>
-  //         </div>
-  //       <div className="InputItem">
-  //         <p>First Name:</p>
-  //         <input type="text" onChange={(event) => setFirstName(event.target.value)}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>MI:</p>
-  //         <input type="text" onChange={(event) => setMiddleName(event.target.value)}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>Last Name:</p>
-  //         <input type="text" onChange={(event) => setLastName(event.target.value)}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>Drivers License #:</p>
-  //         <input type="text" onChange={(event) => setDriversLicenseNum(event.target.value)}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>Phone Number:</p>
-  //         <input type="number" onChange={(event) => setPhoneNumber(event.target.value)}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>Store Credit:</p>
-  //         <input type="checkbox" onChange={(event) => {
-  //           if (event.target.value == "on") {
-  //             setStoreCredit(true)
-  //           } else {
-  //             setStoreCredit(false)
-  //           }
-  //         }}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>Sell:</p>
-  //         <input type="checkbox" onChange={(event) => {
-  //           if (event.target.value == "on") {
-  //             setSellCheck(true)
-  //           } else {
-  //             setSellCheck(false)
-  //           }
-  //         }}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>Transaction ID:</p>
-  //         <input type="number" onChange={(event) => setTransactionID(event.target.value)}/>
-  //       </div>
-  //       <div className="InputItem">
-  //         <p>PO #:</p>
-  //         <input type="number" onChange={(event) => setPONum(event.target.value)}/>
-  //       </div>
-  //       <input type="button" className='submitButton' value="Submit" onClick={() => createItem()} />
-  //     </div>
-  //     <ReactTable setItems={setItems} />
-  //   </div>
-  // );
 }
 
 export default CreateItem;

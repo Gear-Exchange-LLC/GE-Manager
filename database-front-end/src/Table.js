@@ -3,24 +3,24 @@ import ReactDOM from "react-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import { useForm, useField, splitFormProps } from "react-form";
 import { useTable } from "react-table";
-import { Button, Checkbox, TextField, InputAdornment } from "@mui/material";
+import { Button, Box, Checkbox, TextField, InputAdornment, TableHead, TableBody, TableRow, TableCell } from "@mui/material";
 
 const TableInput = props => {
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
-  return <TextField value={cell.value} label={column.Header} onChange={onChange} />;
+  return <TextField sx={{ width: "100%" }} size="small" value={cell.value} label={column.Header} onChange={onChange} />;
 };
 
 const TableNum = props => {
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
-  return <TextField type="number" value={cell.value} label={column.Header} onChange={onChange} />;
+  return <TextField type="number" sx={{ width: "100%" }} size="small" value={cell.value} label={column.Header} onChange={onChange} />;
 };
 
 const TablePrice = props => {
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
-  return <TextField label={column.Header} startAdornment={<InputAdornment position="start">$</InputAdornment>} value={cell.value} onChange={onChange} />;
+  return <TextField sx={{ width: "100%" }} size="small" label={column.Header} startAdornment={<InputAdornment position="start">$</InputAdornment>} value={cell.value} onChange={onChange} />;
 };
 
 const TableCheck = props => {
@@ -42,12 +42,11 @@ const TableCheck = props => {
 }
 
 const StyledTable = styled.table`
-  width: 100vw;
+  width: 100%;
   display: block;
   max-width: 100vw;
   border-collapse: collapse;
   background-color: white;
-  overflow: scroll;
   th,
   td {
     width: 10%;
@@ -60,6 +59,11 @@ const ReactTable = React.memo(props => {
   const { setItems } = props;
   const columns = React.useMemo(
     () => [
+      {
+        Header: "SKU",
+        accessor: "sku",
+        Cell: TableInput
+      },
       {
         Header: "Make",
         accessor: "make",
@@ -76,73 +80,37 @@ const ReactTable = React.memo(props => {
         Cell: TableInput
       },
       {
-        Header: "Condition",
-        accessor: "condition",
-        Cell: TableInput
-      },
-      {
-        Header: "X",
-        accessor: "x",
-        Cell: TablePrice
-      },
-      {
         Header: "Stock",
         accessor: "stock",
-        Cell: TableInput
+        Cell: TableNum
       },
       {
-        Header: "Percent",
-        accessor: "percent",
-        Cell: TableInput
-      },
-      {
-        Header: "Store Credit Amount",
-        accessor: "storeCredit",
-        Cell: TableInput
+        Header: "List Price",
+        accessor: "listPrice",
+        Cell: TablePrice
       },
       {
         Header: "Purchase Amount",
         accessor: "purchaseAmount",
         Cell: TableInput
       },
-      {
-        Header: "SKU",
-        accessor: "sku",
-        Cell: TableInput
-      },
-      {
-        Header: "Store Credit",
-        accessor: "storeCreditCheck",
-        Cell: TableCheck
-      },
-      {
-        Header: "Sell",
-        accessor: "sellCheck",
-        Cell: TableCheck  
-      }
     ],
     []
   );
   const initialData = [
     {
+      sku: "",
       make: "",
       model: "",
       included: "",
-      condition: "",
-      x: "",
       stock: 1,
-      percent: "",
-      storeCredit: "",
+      listPrice: "",
       purchaseAmount: "",
-      sku: "",
-      storeCreditCheck: false,
-      sellCheck: false,
-      complete: false
     },
   ];
   const [data, setData] = React.useState(initialData);
   const resetData = () => setData(initialData);
-  const addRow = () => setData(old => [...old, { make: "", model: "", total: true }]);
+  const addRow = () => setData(old => [...old, { make: "", model: "", included: "", stock: 1, listPrice: "", purchaseAmount: "" }]);
   const removeRow = () => setData(data.slice(0,-1));
   const updateData = (rowIndex, columnID, value) => {
     console.log(value)
@@ -163,32 +131,33 @@ const ReactTable = React.memo(props => {
   const tableSum = rows.reduce((sum, row) => sum + row.values.total, 0);
   setItems(data)
   return (
-    <>
-      <label>Itemized Costs:</label>
+    <Box sx={{
+      // overflowX: "scroll",
+    }}>
       <br />
       <StyledTable {...getTableProps()}>
-        <thead>
+        <TableHead>
           {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <TableCell {...column.getHeaderProps()}>{column.render("Header")}</TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
-        <tbody>
+        </TableHead>
+        <TableBody>
           {rows.map(row => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <TableRow {...row.getRowProps()}>
                 {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  <TableCell {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>
                 ))}
-              </tr>
+              </TableRow>
             );
           })}
-          <tr>
-            <td colSpan={11}>
+          <TableRow>
+            <TableCell colSpan={12}>
               <Button variant="outlined" sx={{marginRight: 2}} onClick={addRow}>
                 Add Row
               </Button>
@@ -198,11 +167,11 @@ const ReactTable = React.memo(props => {
               <Button variant="outlined" sx={{marginRight: 2}} onClick={resetData}>
                 Reset Table
               </Button>
-            </td>
-          </tr>
-        </tbody>
+            </TableCell>
+          </TableRow>
+        </TableBody>
       </StyledTable>
-    </>
+    </Box>
   );
 });
 

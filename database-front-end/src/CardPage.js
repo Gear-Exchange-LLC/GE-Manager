@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
-import './App.css';
 import { SocketContext } from "./context/SocketContext";
 import { useParams } from "react-router-dom";
 
 import MaterialReactTable from 'material-react-table';
-import { Box, Button, Grid, useTheme, AppBar, Toolbar, Typography, Stack } from "@mui/material";
+import { Box, Button, Grid, useTheme, AppBar, Toolbar, Typography, Stack, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress } from "@mui/material";
 import { width } from "@mui/system";
 
 function CardPage() {
@@ -17,6 +16,9 @@ function CardPage() {
 
     const [data, setData] = useState({items: []});
 
+    const [editLoading, setEditLoading] = React.useState(false);
+    const [deleteLoading, setDeleteLoading] = React.useState(false);
+
     socket.emit("get-data");
 
     useEffect(() => {
@@ -28,11 +30,20 @@ function CardPage() {
           }
         })
       })
+
+      socket.on("delete-item", (value) => {
+        if (value) {
+          window.location.href = "/dashboard"
+        }
+      })
     })
 
 
-    const columns = useMemo(
-      () => [
+    const columns = [
+        {
+          accessorKey: 'sku', //access nested data with dot notation
+          header: 'SKU',
+        },
         {
           accessorKey: "make",
           header: "Make"
@@ -46,45 +57,18 @@ function CardPage() {
           header: 'Included',
         },
         {
-          accessorKey: 'condition', //access nested data with dot notation
-          header: 'Condition',
+          accessorKey: "stock",
+          header: "Stock"
         },
         {
-          accessorKey: 'x', //access nested data with dot notation
-          header: 'X',
-        },
-        {
-          accessorKey: 'percent', //access nested data with dot notation
-          header: 'Percent',
-        },
-        {
-          accessorKey: 'storeCredit', //access nested data with dot notation
-          header: 'Store Credit',
+          accessorKey: 'listPrice', //access nested data with dot notation
+          header: 'List Price',
         },
         {
           accessorKey: 'purchaseAmount', //access nested data with dot notation
           header: 'Purchase Amount',
-        },
-        {
-          accessorKey: 'sku', //access nested data with dot notation
-          header: 'SKU',
-        },
-        {
-          accessorKey: 'storeCreditCheck', //access nested data with dot notation
-          header: 'Store Credit',
-        },
-        {
-          accessorKey: 'sellCheck', //access nested data with dot notation
-          header: 'Sell Check',
-          type: "boolean"
-        },
-        {
-          accessorKey: "complete",
-          header: "Is Complete"
         }
-      ],
-      [],
-    );
+      ];
 
     function formatPhoneNumber(phoneNumberString) {
       var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
@@ -96,8 +80,13 @@ function CardPage() {
       return null;
     }
 
-    var tableOptions = {
-      rowStyle: rowData => console.log(rowData)
+    const deleteItem = async () => {
+      
+      setDeleteLoading(true);
+
+      console.log(data.transactionID)
+
+      await socket.emit("deleteItem", data.transactionID)
     }
 
     return (
@@ -147,22 +136,78 @@ function CardPage() {
               <Typography variant="h5">Drivers License:</Typography>
               <Typography variant="h5" sx={{fontWeight: "bold"}}>{data.driversLicense}</Typography>
             </Box>
-            <Box sx={{
+            {/* <Box sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: "column",
                 justifyContent: "space-between"
             }}>
               <Typography variant="h5">Transaction ID:</Typography>
-              <Typography variant="h5" sx={{fontWeight: "bold"}}>{data.transactionID}</Typography>
-            </Box>
+              <Typography variant="h5" sx={{fontWeight: "bold", fontSize: "24px", textAlign: "left", width: "100%"}}>{data.transactionID}</Typography>
+            </Box> */}
           </Box>
         </Box>
-        <Box className="itemWrapper">
-          <MaterialReactTable columns={columns} data={data.items} options={tableOptions}/>
+        <Box sx={{
+          width: "100vw",
+          display: "flex",
+          justifyContent: "center"
+        }}>
+          <TableContainer sx={{
+            width: "90vw"
+          }} component={Paper}>
+            <Table sx={{ minWidth: 100 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell>{column.header}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.items.map((row) => (
+                  <TableRow
+                    key={row.sku}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.sku}
+                    </TableCell>
+                    <TableCell>{row.make}</TableCell>
+                    <TableCell>{row.model}</TableCell>
+                    <TableCell>{row.included}</TableCell>
+                    <TableCell>{row.stock}</TableCell>
+                    <TableCell>${row.listPrice.includes(".") ? row.listPrice : row.listPrice + ".00"}</TableCell>
+                    <TableCell>${row.purchaseAmount.includes(".") ? row.purchaseAmount : row.purchaseAmount + ".00"}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
-        <Stack direction="row" spacing={2} justifyContent="end" paddingRight={2} width="100%">
-          <Button color="primary" variant="outlined" sx={{ width: 200 }} onClick={() => console.log("edit")}>Edit</Button>
-          <Button color="primary" variant="contained" sx={{ width: 200 }} onClick={() => console.log("delete")}>Delete</Button>
+        <Stack direction="row" spacing={2} justifyContent="end" paddingRight={0} width="90vw" marginTop={2} marginLeft={"5vw"}>
+          <Button color="primary" variant="outlined" sx={{ width: 200 }} onClick={() => console.log("edit")}>Edit {editLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    color: "green",
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+                />)}</Button>
+          <Button color="primary" variant="contained" sx={{ width: 200 }} disabled={deleteLoading} onClick={() => deleteItem()}>Delete {deleteLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    color: "green",
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+                />)}</Button>
         </Stack>
       </Box>
     );

@@ -13,6 +13,7 @@ const { write, read, add } = require("./db-manager")
 
 const { Client, Environment, ApiError } = require('square');
 const { create } = require('domain');
+const path = require('path');
 
 // Square Client
 const client = new Client({
@@ -34,7 +35,7 @@ async function createSquareItem(data) {
     var make = item.make;
     var model = item.model;
 
-    var price = item.x;
+    var price = item.listPrice;
 
     if (!price.includes(".")) {
       price = price + "00"
@@ -98,9 +99,10 @@ async function createSquareItem(data) {
 
 app.use(cors())
 
-app.get('/', (req, res) => {
-    write("test", "tesransdji");
-    res.send('/index.html');
+app.use(express.static(path.join(__dirname, "site")))
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, "site/index.html"));
 });
 
 io.on('connection', async (socket) => {
@@ -123,8 +125,25 @@ io.on('connection', async (socket) => {
 
     io.to(socket.id).emit("data", JSON.parse(fs.readFileSync("db.json")).items)
   })
+
+  socket.on("deleteItem", async (transactionID) => {
+    var data = await JSON.parse(fs.readFileSync("db.json"))
+
+    data.items.map(async (item, index) => {
+      item = JSON.parse(item)
+
+      if (item.transactionID == transactionID) {
+        data.items = data.items.slice(index, 0)
+
+        data = JSON.stringify(data);
+        fs.writeFileSync('db.json', data);
+
+        await io.emit("delete-item", transactionID);
+      }
+    })
+  })
 });
 
-server.listen(3001, () => {
-  console.log('listening on *:3001');
+server.listen(80, () => {
+  console.log('listening on *:80');
 });

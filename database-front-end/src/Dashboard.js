@@ -1,6 +1,5 @@
 import { Box, AppBar, Toolbar, Typography, Button, Container, Card, CardHeader, CardContent } from "@mui/material";
 import React, { useContext, useEffect } from "react";
-import './App.css';
 import { SocketContext } from "./context/SocketContext";
 
 function custom_sort(a, b) {
@@ -44,7 +43,7 @@ function Dashboard() {
         alignItems: "center",
         width: "100%"
       }}>
-          {data.sort(custom_sort).reverse().map(function (value, index, array) {
+          {data.length == 0 ? (<Typography variant="h3" marginTop={3}>No Items</Typography>) :  data.sort(custom_sort).reverse().map(function (value, index, array) {
 
               value = JSON.parse(value)
 
