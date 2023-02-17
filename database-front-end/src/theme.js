@@ -12,16 +12,16 @@ export const theme = createTheme({
         dark: "#000"
       },
       primary: {
-        light: "#8b1fd8",
-        main: "#8b1fd8",
-        dark: "#8b1fd8",
+        light: "#5C80BC",
+        main: "#5C80BC",
+        dark: "#5C80BC",
         contrastText: "#fff"
       },
       secondary: {
-        main: "#d3e245",
-        light: "#d3e245",
-        dark: "#d3e245",
-        contrastText: "#000"
+        main: "#0BAE41",
+        light: "#0BAE41",
+        dark: "#0BAE41",
+        contrastText: "#fff"
       }
     }
   });
