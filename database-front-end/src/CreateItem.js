@@ -14,6 +14,7 @@ import dayjs from "dayjs"
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import ReactTable from "./Table";
 import { display, width } from "@mui/system";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 
 function CreateItem() {
@@ -29,6 +30,8 @@ function CreateItem() {
   const [SellCheck, setSellCheck] = React.useState(false);
   const [TransactionID, setTransactionID] = React.useState(uuid());
   const [items, setItems] = React.useState();
+
+  const navigate = useNavigate()
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
@@ -54,7 +57,7 @@ function CreateItem() {
 
   useEffect(() => {
     socket.on("created", (socket) => {
-        window.location.href = "/dashboard"
+        navigate("/dashboard")
         setLoading(false);
     })
   })
@@ -102,12 +105,12 @@ function CreateItem() {
             <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
               Gear Exchange DB Manager
             </Typography>
-            <Button color="secondary" variant="contained" onClick={() => window.location.href = "/dashboard"}>Back to Dashboard</Button>
+            <Button color="secondary" variant="contained" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
           </Toolbar>
         </AppBar>
       </Box>
       <Box sx={{
-        width: "100vw",
+        width: "100%",
         display: "flex",
         justifyContent: "center",
         marginTop: "20px"
@@ -115,7 +118,7 @@ function CreateItem() {
         <Box sx={{
           display: "flex",
           flexDirection: "column",
-          width: "75vw",
+          width: "75%",
         }}>
           <Box className="InputItem" sx={{
             width: "100%",

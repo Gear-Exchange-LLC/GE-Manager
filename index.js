@@ -118,8 +118,6 @@ app.get('/*', (req, res) => {
 io.on('connection', async (socket) => {
   console.log('a user connected: ' + socket.id);
 
-  io.to(socket.id).emit("update", JSON.parse(fs.readFileSync("db.json")))
-
   socket.on("create-item", async (value) => {
     console.log(value);
     await createSquareItem(JSON.parse(value));
@@ -130,6 +128,11 @@ io.on('connection', async (socket) => {
 
     io.emit("update", await read())
   })
+
+  socket.on("request-update", (value) => {
+    console.log("requested Update")
+    io.to(socket.id).emit("update", JSON.parse(fs.readFileSync("db.json")))
+  });
 
   socket.on("get-data", () => {
 

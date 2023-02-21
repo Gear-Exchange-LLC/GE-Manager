@@ -6,6 +6,8 @@ import MaterialReactTable from 'material-react-table';
 import { Box, Button, Grid, useTheme, AppBar, Toolbar, Typography, Stack, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress } from "@mui/material";
 import { width } from "@mui/system";
 
+import { Link, Navigate, useNavigate } from "react-router-dom";
+
 function CardPage() {
 
     const socket = useContext(SocketContext);
@@ -18,6 +20,8 @@ function CardPage() {
 
     const [editLoading, setEditLoading] = React.useState(false);
     const [deleteLoading, setDeleteLoading] = React.useState(false);
+
+    const navigate = useNavigate()
 
     socket.emit("get-data");
 
@@ -33,7 +37,7 @@ function CardPage() {
 
       socket.on("delete-item", (value) => {
         if (value) {
-          window.location.href = "/dashboard"
+          navigate("/dashboard")
         }
       })
     })
@@ -102,7 +106,7 @@ function CardPage() {
               <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
                 Gear Exchange DB Manager
               </Typography>
-              <Button color="secondary" variant="contained" onClick={() => window.location.href = "/dashboard"}>Back to Dashboard</Button>
+              <Button color="secondary" variant="contained" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
             </Toolbar>
           </AppBar>
         </Box>
@@ -147,12 +151,12 @@ function CardPage() {
           </Box>
         </Box>
         <Box sx={{
-          width: "100vw",
+          width: "100%",
           display: "flex",
           justifyContent: "center"
         }}>
           <TableContainer sx={{
-            width: "90vw"
+            width: "90%"
           }} component={Paper}>
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
               <TableHead>
@@ -183,7 +187,7 @@ function CardPage() {
             </Table>
           </TableContainer>
         </Box>
-        <Stack direction="row" spacing={2} justifyContent="end" paddingRight={0} width="90vw" marginTop={2} marginLeft={"5vw"}>
+        <Stack direction="row" spacing={2} justifyContent="end" paddingRight={0} width="90%" marginTop={2} marginLeft={"5%"}>
           {/* <Button color="primary" variant="outlined" sx={{ width: 200 }} onClick={() => console.log("edit")}>Edit {editLoading && (
                 <CircularProgress
                   size={24}
