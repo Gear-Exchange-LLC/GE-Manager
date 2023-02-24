@@ -18,7 +18,7 @@ const path = require('path');
 // Square Client
 const client = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Sandbox
+  environment: Environment.Production
 });
 
 // Socket Server

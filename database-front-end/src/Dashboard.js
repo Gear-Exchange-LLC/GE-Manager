@@ -37,17 +37,10 @@ function Dashboard() {
     return (
     <Box sx={{
       /* background-color: #282c34; */
-      height: "100vh",
+      height: "calc(100vh - 60px)",
+      overflow: "scroll",
       width: "100%"
     }}>
-          <AppBar position="static">
-            <Toolbar>
-              <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
-                Gear Exchange DB Manager
-              </Typography>
-              <Button color="secondary" variant="contained" onClick={() => navigate("/create-item")}>Create Item</Button>
-            </Toolbar>
-          </AppBar>
         <Box sx={{
           display: "flex",
           flexDirection: "column",

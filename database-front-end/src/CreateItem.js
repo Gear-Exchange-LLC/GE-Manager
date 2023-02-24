@@ -97,18 +97,9 @@ function CreateItem() {
 
   return (
     <Box sx={{
-      height: "100vh",
+      height: "calc(100vh - 60px)",
+      overflow: "scroll"
     }}>
-      <Box>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
-              Gear Exchange DB Manager
-            </Typography>
-            <Button color="secondary" variant="contained" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
-          </Toolbar>
-        </AppBar>
-      </Box>
       <Box sx={{
         width: "100%",
         display: "flex",

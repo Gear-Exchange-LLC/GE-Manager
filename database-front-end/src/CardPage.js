@@ -97,19 +97,9 @@ function CardPage() {
       <Box sx={{
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        height: "calc(100vh - 60px)",
         width: "100%",
       }}>
-        <Box>
-          <AppBar position="static">
-            <Toolbar>
-              <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
-                Gear Exchange DB Manager
-              </Typography>
-              <Button color="secondary" variant="contained" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
-            </Toolbar>
-          </AppBar>
-        </Box>
         <Box bgcolor={theme.palette.dataCard} sx={{
           width: "500px",
           height: "170px",
