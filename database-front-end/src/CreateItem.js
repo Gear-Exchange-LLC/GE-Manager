@@ -21,7 +21,7 @@ function CreateItem() {
   
   const socket = useContext(SocketContext);
 
-  const [date, setDate] = React.useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = React.useState(new Date());
   const [FirstName, setFirstName] = React.useState("");
   const [LastName, setLastName] = React.useState("");
   const [DriversLicenseNum, setDriversLicenseNum] = React.useState();
@@ -63,7 +63,7 @@ function CreateItem() {
   })
 
   const [value, setValue] = React.useState(
-    dayjs('2014-08-18T21:11:54'),
+    new dayjs(),
   );
 
   const handleClose = (event, reason) => {

@@ -58,9 +58,33 @@ async function getReverbShop() {
   })
 }
 
+async function getReverbConditions() {
+  return new Promise((resolve, reject) => {
+    const url = "https://api.reverb.com/api/listing_conditions";
+
+    const headers = {
+      headers: {
+        "content-type": "application/hal+json",
+        "accept-version": "3.0",
+      },
+      method: "GET"
+    }
+
+    fetch(url, headers).then(data => { resolve(data.json()) }).catch(error => console.log(error));
+  })
+}
+
 async function createReverbListing(data) {
   const reverbShop = await getReverbShop();
+  const reverbConditions = await getReverbConditions();
 
+
+
+  console.log(reverbShop.name)
+
+  reverbConditions.conditions.map((condition) => {
+    console.log(condition.display_name)
+  })
 
 }
 
@@ -185,5 +209,5 @@ io.on('connection', async (socket) => {
 });
 
 server.listen(80, () => {
-  console.log('listening on *:80    ');
+  console.log('listening on *:80');
 });
