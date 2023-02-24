@@ -1,0 +1,32 @@
+{
+    "make": "Fender",
+    "model": "Stratocaster",
+    "categories": [{
+        "uuid": "get these values from /api/categories/flat"
+    }],
+    "condition": {
+        "uuid": "get these from /api/listing_conditions"
+    },
+    "photos": [
+        "http://i.stack.imgur.com/Sv4BC.png",
+        "http://i.stack.imgur.com/foo.png"
+    ],
+   "videos": [{
+            "link": "https://www.youtube.com/watch?v=FptlwukVz2w"
+  }],
+    "description": "Awesome guitar",
+    "finish": "Sunburst",
+    "price": {
+        "amount": "5000.00",
+        "currency": "USD"
+    },
+    "title": "my favorite fender stratocaster",
+    "year": "1960s",
+    "sku": "1312",
+    "upc_does_not_apply": "true",
+    "has_inventory": true,
+    "inventory": 5,
+    "offers_enabled": false,
+    "handmade": false,
+    "shipping_profile_id": "1306"
+}

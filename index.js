@@ -7,6 +7,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 require('dotenv').config()
 
+var PDFDocument = require('pdfkit');
+
 const crypto = require('crypto');
 
 const { write, read, add } = require("./db-manager")
@@ -36,6 +38,30 @@ try {
   }
 } catch (err) {
   console.error(err)
+}
+
+async function getReverbShop() {
+  return new Promise((resolve, reject) => {
+    const url = "https://sandbox.reverb.com/api/shop"
+
+    const headers = {
+      headers: {
+        "content-type": "application/hal+json",
+        "accept": "application/hal+json",
+        "accept-version": "3.0",
+        "authorization": "Bearer " + process.env.REVERB_ACCESS_TOKEN
+      },
+      method: "GET"
+    }
+
+    fetch(url, headers).then(data => { resolve(data.json()) }).catch(error => console.log(error));
+  })
+}
+
+async function createReverbListing(data) {
+  const reverbShop = await getReverbShop();
+
+
 }
 
 
@@ -159,5 +185,5 @@ io.on('connection', async (socket) => {
 });
 
 server.listen(80, () => {
-  console.log('listening on *:80');
+  console.log('listening on *:80    ');
 });
