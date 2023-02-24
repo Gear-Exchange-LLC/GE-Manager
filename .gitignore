@@ -4,4 +4,4 @@ node_modules
 
 site/*
 
-db.json
+db*.json
