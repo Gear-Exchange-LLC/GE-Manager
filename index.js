@@ -72,14 +72,9 @@ async function createReverbListing(data) {
   const reverbShop = await getReverbShop();
   const reverbConditions = await getReverbConditions();
 
-
-
-  console.log(reverbShop.name)
-
   reverbConditions.conditions.map((condition) => {
-    console.log(condition.display_name)
+    console.log(condition.display_name, condition.uuid)
   })
-
 }
 
 
@@ -173,15 +168,20 @@ io.on('connection', async (socket) => {
     io.emit("update", await read())
   })
 
-  socket.on("request-update", (value) => {
+  socket.on("request-update", async (value) => {
     console.log("requested Update")
-    io.to(socket.id).emit("update", readDatabase())
+    io.to(socket.id).emit("update", await readDatabase())
   });
 
   socket.on("get-data", async () => {
     const data = await readDatabase()
 
     io.to(socket.id).emit("data", data.items)
+  })
+
+  socket.on("create-reverb", async () => {
+    createReverbListing()
+    console.log("Create Reverb")
   })
 
   socket.on("deleteItem", async (transactionID) => {

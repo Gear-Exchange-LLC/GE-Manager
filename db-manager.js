@@ -14,16 +14,16 @@ module.exports.connectDatabase = async function () {
 }
 
 module.exports.readDatabase = async function () {
-    var data = JSON.parse()
+    return new Promise(async (resolve, reject) => {
+        var data = JSON.parse(fs.readFileSync("db copy.json"));
 
-    console.log(await client.keys("*"))
-
-    return data
+        resolve(data);
+    })
 }
 
 module.exports.writeDatabase = async function (value) {
     return new Promise(async (resolve, reject) => {
-        var data = JSON.parse(fs.readFileSync("db.json"));
+        var data = JSON.parse(fs.readFileSync("db copy.json"));
         
         console.log(data);
         data.items.push(value);

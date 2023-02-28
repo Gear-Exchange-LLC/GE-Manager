@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box,  Button, Avatar } from "@mui/material";
-import { SocketContext } from "./context/SocketContext";
+import { socket, SocketContext } from "./context/SocketContext";
 import StorageIcon from '@mui/icons-material/Storage';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -18,6 +18,8 @@ import styled from "styled-components";
 const SideBar = () => {
 
   const [ location, setLocation ] = useState(window.location.pathname);
+
+  const socket = useContext(SocketContext);
 
     const StyledLink = styled(Link)`
       color: white;
@@ -59,6 +61,7 @@ const SideBar = () => {
               justifyContent: "center"
             }}>
               <StyledLink to="/dashboard" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('house')} width="100%" height="100%" fontSize="24px" /></StyledLink>
+              <StyledLink to="" onClick={() => socket.emit("create-reverb")}><FontAwesomeIcon icon={solid('music')} width="100%" height="100%" fontSize="24px" /></StyledLink>
               <StyledLink to="/create-item" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('plus')} width="100%" height="100%" fontSize="24px" /></StyledLink>
             </Box>
           </Box>
