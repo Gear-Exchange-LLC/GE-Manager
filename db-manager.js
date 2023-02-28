@@ -1,27 +1,27 @@
 const fs = require('fs');
 const { resolve } = require('path');
 
-module.exports.edit = function (key, value) {
-    var data = JSON.parse(fs.readFileSync("db.json"));
+const redis = require("redis");
 
-    if (!data[key]) {
-        console.log(`Key: ${key} NOT Found`)
-        return;
-    }
+const client = redis.createClient()
 
-    data[key] = value;
+client.on("connect", () => {
+    console.log("Connected to database")
+})
 
-    data = JSON.stringify(data);
-    fs.writeFileSync('db.json', data);
+module.exports.connectDatabase = async function () {
+    await client.connect();
 }
 
-module.exports.read = async function () {
-    var data = JSON.parse(fs.readFileSync("db.json"));
+module.exports.readDatabase = async function () {
+    var data = JSON.parse()
+
+    console.log(await client.keys("*"))
 
     return data
 }
 
-module.exports.add = async function (value) {
+module.exports.writeDatabase = async function (value) {
     return new Promise(async (resolve, reject) => {
         var data = JSON.parse(fs.readFileSync("db.json"));
         
@@ -29,7 +29,8 @@ module.exports.add = async function (value) {
         data.items.push(value);
 
         data = JSON.stringify(data);
-        fs.writeFileSync('db.json', data);
+
+
 
         resolve(data);
     })

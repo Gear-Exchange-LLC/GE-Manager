@@ -1,28 +1,30 @@
 const express = require('express');
 const app = express();
-const fs = require('fs');
 const http = require('http');
 var cors = require("cors");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 require('dotenv').config()
 
+const redis = require('redis');
+
+const client = redis.createClient(6379);
+
 var PDFDocument = require('pdfkit');
 
 const crypto = require('crypto');
 
-const { write, read, add } = require("./db-manager")
+const { writeDatabase, readDatabase, connectDatabase } = require("./db-manager")
 
 const { Client, Environment, ApiError } = require('square');
 const { create } = require('domain');
 const path = require('path');
 
 // Square Client
-const client = new Client({
+const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
   environment: Environment.Production
 });
-
 // Socket Server
 const io = new Server(server, {
     cors: {
@@ -30,15 +32,7 @@ const io = new Server(server, {
     }
 });
 
-try {
-  if (fs.existsSync("./db.json")) {
-    console.log('yes')
-  } else {
-    fs.writeFileSync("db.json", JSON.stringify({items: []}))
-  }
-} catch (err) {
-  console.error(err)
-}
+connectDatabase()
 
 async function getReverbShop() {
   return new Promise((resolve, reject) => {
@@ -109,7 +103,7 @@ async function createSquareItem(data) {
     var sku = item.sku;
   
     try {
-      const objectResponse = await client.catalogApi.upsertCatalogObject({
+      const objectResponse = await squareClient.catalogApi.upsertCatalogObject({
         idempotencyKey: crypto.randomUUID(),
         object: {
           type: 'ITEM',
@@ -135,7 +129,7 @@ async function createSquareItem(data) {
         }
       });
   
-      const stockResponse = await client.inventoryApi.batchChangeInventory({
+      const stockResponse = await squareClient.inventoryApi.batchChangeInventory({
         idempotencyKey: crypto.randomUUID(),
         changes: [
           {
@@ -172,7 +166,7 @@ io.on('connection', async (socket) => {
     console.log(value);
     await createSquareItem(JSON.parse(value));
     
-    add(value)
+    writeDatabase(value)
 
     io.to(socket.id).emit("created");
 
@@ -181,16 +175,17 @@ io.on('connection', async (socket) => {
 
   socket.on("request-update", (value) => {
     console.log("requested Update")
-    io.to(socket.id).emit("update", JSON.parse(fs.readFileSync("db.json")))
+    io.to(socket.id).emit("update", readDatabase())
   });
 
-  socket.on("get-data", () => {
+  socket.on("get-data", async () => {
+    const data = await readDatabase()
 
-    io.to(socket.id).emit("data", JSON.parse(fs.readFileSync("db.json")).items)
+    io.to(socket.id).emit("data", data.items)
   })
 
   socket.on("deleteItem", async (transactionID) => {
-    var data = await JSON.parse(fs.readFileSync("db.json"))
+    var data = await readDatabase()
 
     data.items.map(async (item, index) => {
       item = JSON.parse(item)
@@ -199,7 +194,7 @@ io.on('connection', async (socket) => {
         data.items = data.items.slice(index, 0)
 
         data = JSON.stringify(data);
-        fs.writeFileSync('db.json', data);
+        await writeDatabase(data)
 
         io.emit("delete-item", transactionID);
         io.emit("update", await read())
