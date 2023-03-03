@@ -24,7 +24,7 @@ const { read } = require('pdfkit');
 // Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Production
+  environment: Environment.Environment
 });
 // Socket Server
 const io = new Server(server, {
@@ -33,12 +33,36 @@ const io = new Server(server, {
     }
 });
 
-const reverbShopURL = "https://sandbox.reverb.com/api/shop";
-const reverbConditionUrl = "https://api.reverb.com/api/listing_conditions"
+const reverbAPIUrl = "https://api.reverb.com/api/listings"
 
-async function getReverbShop() {
+async function createReverbListing(item) {
   return new Promise((resolve, reject) => {
-    const url = reverbShopURL
+    const url = reverbAPIUrl
+
+    const data = {
+      make: item.make,
+      model: item.model,
+      categories: [{
+        "uuid": item.category
+      }],
+      condition: {
+          "uuid": item.condition
+      },
+      photos: [],
+      description: "Test Item",
+      price: {
+          amount: item.listPrice.includes(".") ? item.listPrice : item.listPrice + ".00",
+          currency: "USD"
+      },
+      title: `(${item.sku}) ${item.make} ${item.model}`,
+      sku: item.sku,
+      upc_does_not_apply: "true",
+      has_inventory: true,
+      inventory: item.stock,
+      offers_enabled: false,
+      handmade: false,
+      shipping_profile_id: "1306"
+  }
 
     const headers = {
       headers: {
@@ -47,38 +71,24 @@ async function getReverbShop() {
         "accept-version": "3.0",
         "authorization": "Bearer " + process.env.REVERB_ACCESS_TOKEN
       },
-      method: "GET"
+      body: JSON.stringify(data),
+      method: "POST"
     }
 
     fetch(url, headers).then(data => { resolve(data.json()) }).catch(error => console.log(error));
   })
 }
 
-async function getReverbConditions() {
-  return new Promise((resolve, reject) => {
-    const url = reverbConditionUrl;
+async function createReverb(data) {
+  return new Promise(async (resolve, reject) => {
+    for (let i = 0; i < data.items.length; i++) {
+      const item = data.items[i];
+      
+      await createReverbListing(item)
 
-    const headers = {
-      headers: {
-        "content-type": "application/hal+json",
-        "accept-version": "3.0",
-      },
-      method: "GET"
+      resolve()
     }
-
-    fetch(url, headers).then(data => { resolve(data.json()) }).catch(error => console.log(error));
   })
-}
-
-async function createReverbListing(data) {
-  const reverbShop = await getReverbShop();
-  const reverbConditions = (await getReverbConditions()).conditions;
-
-
-  for (let i = 0; i < reverbConditions.length; i++) {
-    const condition = reverbConditions[i];
-    console.log(condition.display_name, condition.uuid)
-  }
 }
 
 
@@ -184,8 +194,10 @@ io.on('connection', async (socket) => {
     io.to(socket.id).emit("data", data)
   })
 
-  socket.on("create-reverb", async () => {
-    createReverbListing()
+  socket.on("create-reverb", async (data) => {
+    await createReverb(data)
+
+    await socket.emit("reverb")
     console.log("Create Reverb")
   })
 
@@ -198,7 +210,7 @@ io.on('connection', async (socket) => {
   })
 });
 
-server.listen(80, () => {
-  console.log('listening on *:80');
+server.listen(81, () => {
+  console.log('listening on *:81');
   connectDatabase()
 });

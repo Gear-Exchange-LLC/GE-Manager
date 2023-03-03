@@ -48,6 +48,14 @@ function CreateItem() {
       return;
     }
 
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      
+      if (item.condition == "pick-one" || item.category == "pick-one") {
+        return;
+      }
+    }
+
     const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, items: items }
 
     setLoading(true);
