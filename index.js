@@ -33,11 +33,12 @@ const io = new Server(server, {
     }
 });
 
-connectDatabase()
+const reverbShopURL = "https://sandbox.reverb.com/api/shop";
+const reverbConditionUrl = "https://api.reverb.com/api/listing_conditions"
 
 async function getReverbShop() {
   return new Promise((resolve, reject) => {
-    const url = "https://sandbox.reverb.com/api/shop"
+    const url = reverbShopURL
 
     const headers = {
       headers: {
@@ -55,7 +56,7 @@ async function getReverbShop() {
 
 async function getReverbConditions() {
   return new Promise((resolve, reject) => {
-    const url = "https://api.reverb.com/api/listing_conditions";
+    const url = reverbConditionUrl;
 
     const headers = {
       headers: {
@@ -199,4 +200,5 @@ io.on('connection', async (socket) => {
 
 server.listen(80, () => {
   console.log('listening on *:80');
+  connectDatabase()
 });
