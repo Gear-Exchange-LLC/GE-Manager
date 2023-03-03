@@ -24,11 +24,10 @@ function Dashboard() {
 
     useEffect(() => {
         socket.on("update", (data) => {
-            console.log(data.items)
-            setData(data.items)
+            setData(data)
         })
         socket.on("connect", (value) => {
-          console.log(socket.id)
+          
         })
 
         socket.emit("request-update");

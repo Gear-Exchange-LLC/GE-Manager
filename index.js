@@ -14,11 +14,12 @@ var PDFDocument = require('pdfkit');
 
 const crypto = require('crypto');
 
-const { writeDatabase, readDatabase, connectDatabase } = require("./db-manager")
+const { writeDatabase, readDatabase, connectDatabase, deleteDatabase } = require("./db-manager")
 
 const { Client, Environment, ApiError } = require('square');
 const { create } = require('domain');
 const path = require('path');
+const { read } = require('pdfkit');
 
 // Square Client
 const squareClient = new Client({
@@ -70,11 +71,13 @@ async function getReverbConditions() {
 
 async function createReverbListing(data) {
   const reverbShop = await getReverbShop();
-  const reverbConditions = await getReverbConditions();
+  const reverbConditions = (await getReverbConditions()).conditions;
 
-  reverbConditions.conditions.map((condition) => {
+
+  for (let i = 0; i < reverbConditions.length; i++) {
+    const condition = reverbConditions[i];
     console.log(condition.display_name, condition.uuid)
-  })
+  }
 }
 
 
@@ -161,22 +164,23 @@ io.on('connection', async (socket) => {
     console.log(value);
     await createSquareItem(JSON.parse(value));
     
-    writeDatabase(value)
+    await writeDatabase(value);
 
     io.to(socket.id).emit("created");
 
-    io.emit("update", await read())
+    io.emit("update", await readDatabase())
   })
 
   socket.on("request-update", async (value) => {
     console.log("requested Update")
-    io.to(socket.id).emit("update", await readDatabase())
+
+    const data = await readDatabase();
+    io.to(socket.id).emit("update", data)
   });
 
   socket.on("get-data", async () => {
     const data = await readDatabase()
-
-    io.to(socket.id).emit("data", data.items)
+    io.to(socket.id).emit("data", data)
   })
 
   socket.on("create-reverb", async () => {
@@ -185,21 +189,11 @@ io.on('connection', async (socket) => {
   })
 
   socket.on("deleteItem", async (transactionID) => {
-    var data = await readDatabase()
 
-    data.items.map(async (item, index) => {
-      item = JSON.parse(item)
+    await deleteDatabase(transactionID)
 
-      if (item.transactionID == transactionID) {
-        data.items = data.items.slice(index, 0)
-
-        data = JSON.stringify(data);
-        await writeDatabase(data)
-
-        io.emit("delete-item", transactionID);
-        io.emit("update", await read())
-      }
-    })
+    socket.emit("delete-item", transactionID);
+    io.emit("update", await readDatabase())
   })
 });
 
