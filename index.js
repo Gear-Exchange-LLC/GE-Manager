@@ -24,7 +24,7 @@ const { read } = require('pdfkit');
 // Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Environment
+  environment: Environment.Production
 });
 // Socket Server
 const io = new Server(server, {
@@ -49,7 +49,7 @@ async function createReverbListing(item) {
           "uuid": item.condition
       },
       photos: [],
-      description: "Test Item",
+      description: `${item.make} ${item.model}`,
       price: {
           amount: item.listPrice.includes(".") ? item.listPrice : item.listPrice + ".00",
           currency: "USD"
