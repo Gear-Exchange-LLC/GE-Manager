@@ -210,7 +210,7 @@ io.on('connection', async (socket) => {
   })
 });
 
-server.listen(81, () => {
-  console.log('listening on *:81');
+server.listen(80, () => {
+  console.log('listening on *:80');
   connectDatabase()
 });
