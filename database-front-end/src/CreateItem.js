@@ -56,7 +56,7 @@ function CreateItem() {
       }
     }
 
-    const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, items: items }
+    const value = { date: date, timeCreated: new Date().toISOString(), firstName: FirstName, lastName: LastName, driversLicense: DriversLicenseNum, phoneNumber: PhoneNumber, storeCredit: StoreCredit, sell: SellCheck, transactionID: TransactionID, completed: false, reverbCreated: false, items: items }
 
     setLoading(true);
 

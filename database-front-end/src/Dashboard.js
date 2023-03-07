@@ -46,21 +46,45 @@ function Dashboard() {
           alignItems: "center",
           width: "100%"
         }}>
+            <Typography variant="h3" marginTop={2}>In Progress Tickets:</Typography>
             {data.length == 0 ? (<Typography variant="h3" marginTop={3}>No Items</Typography>) :  data.sort(custom_sort).reverse().map(function (value, index, array) {
 
                 value = JSON.parse(value)
 
+                if (value.completed) return <></>;
+
                 return (
-                    <Card sx={{margin: 2, maxWidth: 600, width: "100%", cursor: "pointer", 
-                    ':hover': {
-                      boxShadow: 5,
-                    }, 
-                    }} onClick={() => navigate("/card/" + value.transactionID)}>
-                        <CardContent>
-                          <Typography variant="h4">{value.firstName} {value.lastName}</Typography>
-                          <Typography variant="h7" sx={{ mb: 1.5 }} >{value.items.length} Items <br /></Typography>
-                        </CardContent>
-                    </Card>
+                  <Card sx={{margin: 2, maxWidth: 600, width: "100%", cursor: "pointer", 
+                  ':hover': {
+                    boxShadow: 5,
+                  }, 
+                  }} onClick={() => navigate("/card/" + value.transactionID)}>
+                      <CardContent>
+                        <Typography variant="h4">{value.firstName} {value.lastName}</Typography>
+                        <Typography variant="h7" sx={{ mb: 1.5 }} >{value.items.length} Items <br /></Typography>
+                      </CardContent>
+                  </Card>
+              )
+            })} 
+
+            { data.length == 0 ? <></> : <Typography variant="h3" marginTop={2}>Completed Tickets:</Typography>}
+            {data.sort(custom_sort).reverse().map(function (value, index, array) {
+
+                value = JSON.parse(value)
+
+                if (!value.completed) return <></>;
+
+                return (
+                <Card sx={{margin: 2, maxWidth: 600, width: "100%", cursor: "pointer", 
+                ':hover': {
+                    boxShadow: 5,
+                }, 
+                }} onClick={() => navigate("/card/" + value.transactionID)}>
+                    <CardContent>
+                        <Typography variant="h4">{value.firstName} {value.lastName}</Typography>
+                        <Typography variant="h7" sx={{ mb: 1.5 }} >{value.items.length} Items <br /></Typography>
+                    </CardContent>
+                </Card>
                 )
             })} 
         </Box>

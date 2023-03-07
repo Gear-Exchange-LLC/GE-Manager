@@ -48,7 +48,7 @@ const SideBar = () => {
             flexDirection: "column",
             alignItems: "center",
             paddingBlock: "10px",
-            position: "relative"
+            position: "relative",
           }}>
             <Avatar />
             <Box sx={{
@@ -60,7 +60,7 @@ const SideBar = () => {
               alignItems: "center",
               justifyContent: "center"
             }}>
-              <StyledLink to="/dashboard" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('house')} width="100%" height="100%" fontSize="24px" /></StyledLink>
+              <StyledLink to="/dashboard" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('ticket')} width="100%" height="100%" fontSize="24px" /></StyledLink>
               <StyledLink to="/create-item" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('plus')} width="100%" height="100%" fontSize="24px" /></StyledLink>
             </Box>
           </Box>

@@ -40,5 +40,7 @@ https://developer.squareup.com/
 # Sample .env File
 
 ```
-SQUARE_ACCESS_TOKEN=<Your Square Token>
+SQUARE_ACCESS_TOKEN=<Production Square Token>
+
+REVERB_ACCESS_TOKEN=<Production Reverb Token>
 ```

@@ -21,6 +21,7 @@ function CardPage() {
     const [editLoading, setEditLoading] = React.useState(false);
     const [deleteLoading, setDeleteLoading] = React.useState(false);
     const [createListingLoading, setCreateListingLoading] = React.useState(false);
+    const [completeLoading, setCompleteLoading] = React.useState(false);
 
     const navigate = useNavigate()
 
@@ -32,6 +33,9 @@ function CardPage() {
           var item = JSON.parse(item)
           if (item.transactionID == id) {
             setData(item)
+            setCompleteLoading(false);
+            setCreateListingLoading(false);
+            setDeleteLoading(false);
           }
         })
       })
@@ -102,8 +106,6 @@ function CardPage() {
       
       setDeleteLoading(true);
 
-      console.log(data.transactionID)
-
       await socket.emit("deleteItem", data.transactionID)
     }
 
@@ -111,9 +113,14 @@ function CardPage() {
       
       setCreateListingLoading(true);
 
-      console.log(data)
-
       await socket.emit("create-reverb", data)
+    }
+
+    const markComplete = async () => {
+      
+      setCompleteLoading(true);
+
+      await socket.emit("set-complete", data)
     }
 
     return (
@@ -163,6 +170,20 @@ function CardPage() {
             </Box> */}
           </Box>
         </Box>
+        <Stack direction="row" spacing={2} justifyContent="end" paddingRight={0} width="90%" marginBottom={2} marginLeft={"5%"}>
+          <Button color="primary" variant={ data.completed ? "outlined" : "contained"} sx={{ width: 200 }} disabled={completeLoading} onClick={() => markComplete()}>{ data.completed ? "Mark as UnComplete" : "Mark as Complete" }{deleteLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    color: "green",
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    marginTop: '-12px',
+                    marginLeft: '-12px',
+                  }}
+                />)}</Button>
+        </Stack>
         <Box sx={{
           width: "100%",
           display: "flex",
@@ -242,7 +263,7 @@ function CardPage() {
                     marginLeft: '-12px',
                   }}
                 />)}</Button> */}
-          <Button color="primary" variant="outlined" sx={{ width: 200 }} disabled={createListingLoading} onClick={() => createListing()}>Create Listing {createListingLoading && (
+          <Button color="primary" variant="outlined" sx={{ width: 200 }} disabled={createListingLoading || data.reverbCreated == true} onClick={() => createListing()}>Create Listing {createListingLoading && (
                 <CircularProgress
                   size={24}
                   sx={{

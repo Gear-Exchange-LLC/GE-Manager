@@ -24,7 +24,7 @@ const { read } = require('pdfkit');
 // Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Environment
+  environment: Environment.Production
 });
 // Socket Server
 const io = new Server(server, {
@@ -61,7 +61,6 @@ async function createReverbListing(item) {
       inventory: item.stock,
       offers_enabled: false,
       handmade: false,
-      shipping_profile_id: "1306"
   }
 
     const headers = {
@@ -182,6 +181,15 @@ io.on('connection', async (socket) => {
     io.emit("update", await readDatabase())
   })
 
+  socket.on("set-complete", async (data) => {
+    data.completed = !data.completed;
+
+    await writeDatabase(JSON.stringify(data));
+
+    socket.emit("data", await readDatabase())
+    io.emit("update", await readDatabase())
+  });
+
   socket.on("request-update", async (value) => {
     console.log("requested Update")
 
@@ -197,7 +205,13 @@ io.on('connection', async (socket) => {
   socket.on("create-reverb", async (data) => {
     await createReverb(data)
 
-    await socket.emit("reverb")
+    data.reverbCreated = true;
+
+    await writeDatabase(JSON.stringify(data));
+
+    socket.emit("reverb")
+    socket.emit("data", await readDatabase())
+    io.emit("update", await readDatabase())
     console.log("Create Reverb")
   })
 
