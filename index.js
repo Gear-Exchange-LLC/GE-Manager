@@ -49,7 +49,7 @@ async function createReverbListing(item) {
           "uuid": item.condition
       },
       photos: [],
-      description: "Test Item",
+      description: `${item.make} ${item.model}`,
       price: {
           amount: item.listPrice.includes(".") ? item.listPrice : item.listPrice + ".00",
           currency: "USD"
