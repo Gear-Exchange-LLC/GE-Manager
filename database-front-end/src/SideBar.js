@@ -30,7 +30,7 @@ const SideBar = () => {
       display: grid;
       place-items: center;
       
-      border-right: ${props => props.to === location ? "0px" : "2px"} solid red;
+      border-right: 0px solid red;
 
       transition: all 0.25s ease-in-out;
 
