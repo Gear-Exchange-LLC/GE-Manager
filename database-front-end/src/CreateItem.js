@@ -132,7 +132,7 @@ function CreateItem() {
               value={value}
               onChange={handleChange}
             />
-            <TextField sx={{margin: "8px", width: "450px"}} size="small" id="transactionIDInput" label="Transaction ID" variant="outlined" disabled  value={TransactionID} onChange={(event) => { setTransactionID(event.target.value) }} />
+            <TextField sx={{margin: "8px", width: "450px"}} size="small" id="transactionIDInput" label="Transaction ID" variant="outlined"  value={TransactionID} onChange={(event) => { setTransactionID(event.target.value) }} />
           </Box>
           <Typography variant="h3" marginTop={5} marginBottom={2}>Customer Info:</Typography>
           <Box sx={{
