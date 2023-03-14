@@ -44,14 +44,18 @@ const reverbAPIUrl = "https://api.reverb.com/api/listings"
 async function createSquareLabel() {
 try {
     // Retrieve all items from the Square catalog
-    const { result: item } = await squareClient.catalogApi.retrieveCatalogObject("CBUZ6SSNRZKIB3SPCDUDUMJX");
+    const { result: item } = await squareClient.catalogApi.retrieveCatalogObject("HLVQZQN7HMDCJOYLSWMQGOBL");
 
     // Define HTML template for label
     const labelTemplate = (item) => `
       <div style="display: flex; position: absolute; left: 0; top: 0; right: 0; bottom: 0; max-width: 1.35in; max-height: 0.48in; border: 1px solid black; padding: 10px;">
         <div style="font-size: 8px; font-weight: bold; ">${item.itemData.name}</div>
-        <div style="font-size: 6px;">SKU: ${item.itemData.variations[0].sku}</div>
+        <div style="font-size: 6px;">SKU: ${item.itemData.variations[0].itemVariationData.sku}</div>
         <div style="font-size: 6px;">Price: $${item.itemData.variations[0].itemVariationData.priceMoney.amount.toString().split("n")[0] / 100}</div>
+        <div style="font-family: UPC-A; font-size: 50px;"><svg id="barcode"></svg></div>
+        <script>
+          JsBarcode("#barcode", "15816", {format: "code39"});
+        </script>
       </div>
     `;
 
@@ -62,6 +66,7 @@ try {
           <style>
             body { font-family: Arial, sans-serif; }
           </style>
+          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
         </head>
         <body>
           ${labelHTML}
@@ -113,6 +118,8 @@ try {
     console.error('Error generating item labels: ', error);
   }
 }
+
+createSquareLabel()
 
 async function createReverbListing(item) {
   return new Promise((resolve, reject) => {
@@ -279,7 +286,12 @@ async function createSquareItem(data) {
 
 app.use(cors())
 
-app.use(express.static(path.join(__dirname, "site")))
+app.use(express.static(path.join(__dirname, "Site")))
+app.use(express.static(path.join(__dirname, "barcodeFont")))
+
+app.get('/barcodeFont.ttf', (req, res) => {
+  res.sendFile(path.join(__dirname, "barcodeFont/free3of9.ttf"));
+});
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, "site/index.html"));
