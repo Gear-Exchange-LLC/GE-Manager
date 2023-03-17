@@ -61,6 +61,7 @@ const SideBar = () => {
               justifyContent: "center"
             }}>
               <StyledLink to="/dashboard" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('ticket')} width="100%" height="100%" fontSize="24px" /></StyledLink>
+              <StyledLink to="/search" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('magnifying-glass')} width="100%" height="100%" fontSize="24px" /></StyledLink>
               <StyledLink to="/create-item" onClick={() => setLocation(window.location.pathname)}><FontAwesomeIcon icon={solid('plus')} width="100%" height="100%" fontSize="24px" /></StyledLink>
             </Box>
           </Box>

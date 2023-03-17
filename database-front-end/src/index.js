@@ -26,6 +26,7 @@ import { AppBar, Toolbar } from '@mui/material';
 import theme from './theme';
 import SideBar from './SideBar';
 import { Box } from '@mui/system';
+import SearchItemsPage from './SearchItemsPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -52,6 +53,7 @@ root.render(
                   <Route path='/create-item' exact={true} element={<CreateItem />} />
                   <Route path="/card/:id" element={<CardPage />} />
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/search" element={<SearchItemsPage />} />
                   <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
                 </Routes>
               </Box>
