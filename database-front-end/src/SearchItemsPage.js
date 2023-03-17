@@ -2,6 +2,8 @@ import { Box, Button, Typography, TextField } from "@mui/material";
 import React, { useEffect, useContext } from "react"
 import { SocketContext } from "./context/SocketContext";
 
+import { useNavigate } from "react-router-dom";
+
 const SearchItemsPage = () => {
 
     const inputStyle = {
@@ -9,6 +11,8 @@ const SearchItemsPage = () => {
     }
 
     const socket = useContext(SocketContext);
+
+    const navigate = useNavigate()
 
     var [items, setItems] = React.useState([]);
 
@@ -59,7 +63,7 @@ const SearchItemsPage = () => {
                 <Button sx={{ marginRight: 1, marginTop: 1 }} variant="contained">Search</Button>
             </Box>
 
-            <Box sx={{ height: "calc(100% - 65px)", marginTop: "15px", overflow: "scroll" }}>
+            <Box sx={{ paddingInline: "20px", paddingLeft: "15px", height: "calc(100% - 65px)", marginTop: "15px", overflow: "scroll" }}>
                 {items.map((item) => {
 
                     return (
@@ -69,8 +73,8 @@ const SearchItemsPage = () => {
                                 ({item.sku}) {item.make} {item.model}
                             </Box>
                             <Box marginRight="20px">
-                                <Button variant="outlined" sx={{ marginRight: .5 }}>Go to Listing</Button>
-                                <Button variant="contained" sx={{ marginLeft: .5 }}>Add to Label</Button>
+                                {/* <Button variant="outlined" sx={{ marginRight: .5 }} onClick={() => navigate("/card/" + item.transactionID)}>Go to Listing</Button>
+                                <Button variant="contained" sx={{ marginLeft: .5 }}>Add to Label</Button> */}
                             </Box>
                         </Box>
                     )
