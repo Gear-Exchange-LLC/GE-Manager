@@ -21,7 +21,9 @@ function CreateItem() {
   
   const socket = useContext(SocketContext);
 
-  const [date, setDate] = React.useState(new Date());
+  // set date to the format mm/dd/yyyy using default Date Library native to JS (new Date())
+  const [date, setDate] = React.useState(dayjs(new Date()).format("MM/DD/YYYY"));
+
   const [FirstName, setFirstName] = React.useState("");
   const [LastName, setLastName] = React.useState("");
   const [DriversLicenseNum, setDriversLicenseNum] = React.useState();
