@@ -16,6 +16,8 @@ const SearchItemsPage = () => {
 
     var [items, setItems] = React.useState([]);
 
+    var [searchItems, setSearchItems] = React.useState([])
+
     useEffect(() => {
         socket.on("update", (data) => {
 
@@ -46,6 +48,7 @@ const SearchItemsPage = () => {
             });
 
             setItems(items_temp)
+            setSearchItems(items_temp)
         })
 
         socket.emit("request-update");
@@ -58,13 +61,13 @@ const SearchItemsPage = () => {
           }}>
             <Box sx={{ height: "50px", display: "flex", flexDirection: "row", justifyContent: "center", paddingTop: "10px", paddingRight: "100px", alignItems: "center" }}>
                 <Box marginRight={1} marginTop={1} height="fit-content">
-                    <TextField style={inputStyle} size="small" id="searchInput" label="Search" variant="outlined" onChange={(event) => { console.log(event.target.value) }} />
+                    <TextField style={inputStyle} size="small" id="searchInput" label="Search" variant="outlined" onChange={(event) => { setSearchItems(items.filter(s => ( s.sku.toLowerCase() + " " + s.make.toLowerCase() + " " + s.model.toLowerCase()).includes(event.target.value.toLowerCase()))) }} />
                 </Box>
-                <Button sx={{ marginRight: 1, marginTop: 1 }} variant="contained">Search</Button>
+                {/* <Button sx={{ marginRight: 1, marginTop: 1 }} variant="contained">Search</Button> */}
             </Box>
 
             <Box sx={{ paddingInline: "20px", paddingLeft: "15px", height: "calc(100% - 65px)", marginTop: "15px", overflow: "scroll" }}>
-                {items.map((item) => {
+                {searchItems.map((item) => {
 
                     return (
                         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%", height: "50px", border: "1px solid gray", margin: "2px" }}>

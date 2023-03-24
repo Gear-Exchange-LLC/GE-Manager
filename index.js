@@ -113,41 +113,69 @@ async function createReverbListing(item) {
   })
 }
 
-async function getSquareData() {
-  let cursor = '';
-  let hasMoreItems = true;
-  let items = [];
+// write a function that gets all the catelog items using cursor from square and sorts by highest sku number and returns the highest sku number 
+async function getHighestSku() {
+  return new Promise(async (resolve, reject) => {
+    let cursor = '';
+    let hasMoreItems = true;
+    let items = [];
 
-  while (hasMoreItems) {
-    const response = await squareClient.catalogApi.listCatalog(cursor);
-    const { objects, cursor: nextCursor } = response;
-    items = items.concat(objects);
+    while (hasMoreItems) {
+      try {
+        const response = await squareClient.catalogApi.listCatalog(cursor);
+        const { objects, cursor: nextCursor } = response.result;
+        items = items.concat(objects);
 
-    if (!nextCursor) {
-      hasMoreItems = false;
-    } else {
-      cursor = nextCursor;
-    }
-  }
+        if (!nextCursor) {
+          hasMoreItems = false;
+        } else {
 
-  // Sort items by SKU
-  items.sort((a, b) => {
-    const variationA = a.item_data.variations[0];
-    const variationB = b.item_data.variations[0];
-    if (variationA && variationB) {
-      const skuA = variationA.sku ? variationA.sku.toUpperCase() : '';
-      const skuB = variationB.sku ? variationB.sku.toUpperCase() : '';
-      if (skuA < skuB) {
-        return -1;
-      }
-      if (skuA > skuB) {
-        return 1;
+          cursor = nextCursor;  
+        }
+
+      } catch (error) {
+        console.log(error)
       }
     }
-    return 0;
-  });
 
-  console.log(items);
+    // Sort items by SKU
+    items.sort((a, b) => {
+      if (a.type === "ITEM" && b.type === "ITEM") {
+
+        const variationA = a.itemData.variations[0];
+
+        const variationB = b.itemData.variations[0];
+
+        if (variationA && variationB) {
+
+          const skuA = variationA.sku ? variationA.sku.toUpperCase() : '';
+
+          const skuB = variationB.sku ? variationB.sku.toUpperCase() : '';
+
+          if (skuA < skuB) {
+
+            return -1;
+
+          }
+
+          if (skuA > skuB) {
+
+            return 1;
+
+          }
+
+        }
+      }
+
+      return 0;
+    });
+
+    const highestSku = items[items.length - 1].itemData.variations[0].sku;
+
+    resolve(highestSku);
+  })
+  
+
 }
 
 async function createReverb(data) {
@@ -251,9 +279,27 @@ io.on('connection', async (socket) => {
 
   socket.on("create-item", async (value) => {
     console.log(value);
-    await createSquareItem(JSON.parse(value));
+
+    value = JSON.parse(value);
+
+    // var highestSku = await getHighestSku();
+
+    // console.log("Highest: " + highestSku)
+
+    // highestSku = highestSku + 1;
+
+    // console.log("New Highest: " + highestSku)
+
+    // change sku in value.items array
+    // await value.items.map((item, i) => {
+    //   value.items[i].sku = new_sku;
+    //   console.log(value.items[i].sku)
+    //   new_sku++;
+    // })
+
+    await createSquareItem(value);
     
-    await writeDatabase(value);
+    await writeDatabase(JSON.stringify(value));
 
     io.to(socket.id).emit("created");
 
