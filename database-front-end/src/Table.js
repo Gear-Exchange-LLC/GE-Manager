@@ -116,11 +116,11 @@ const ReactTable = React.memo(props => {
   const { setItems } = props;
   const columns = React.useMemo(
     () => [
-      {
-        Header: "SKU",
-        accessor: "sku",
-        Cell: TableInput
-      },
+      // {
+      //   Header: "SKU",
+      //   accessor: "sku",
+      //   Cell: TableInput
+      // },
       {
         Header: "Make",
         accessor: "make",

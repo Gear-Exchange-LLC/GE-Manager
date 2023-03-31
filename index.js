@@ -116,66 +116,68 @@ async function createReverbListing(item) {
 // write a function that gets all the catelog items using cursor from square and sorts by highest sku number and returns the highest sku number 
 async function getHighestSku() {
   return new Promise(async (resolve, reject) => {
-    let cursor = '';
-    let hasMoreItems = true;
-    let items = [];
+    try{
+      let cursor = '';
+      let hasMoreItems = true;
+      let items = [];
 
-    while (hasMoreItems) {
-      try {
-        const response = await squareClient.catalogApi.listCatalog(cursor);
-        const { objects, cursor: nextCursor } = response.result;
-        items = items.concat(objects);
+      while (hasMoreItems) {
+        try {
+          const response = await squareClient.catalogApi.listCatalog(cursor);
+          const { objects, cursor: nextCursor } = response.result;
+          items = items.concat(objects);
 
-        if (!nextCursor) {
-          hasMoreItems = false;
-        } else {
+          if (!nextCursor) {
+            hasMoreItems = false;
+          } else {
 
-          cursor = nextCursor;  
+            cursor = nextCursor;  
+          }
+
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      // Sort items by SKU
+      items.sort((a, b) => {
+        if (a.type === "ITEM" && b.type === "ITEM") {
+
+          const variationA = a.itemData.variations[0];
+
+          const variationB = b.itemData.variations[0];
+
+          if (variationA && variationB) {
+
+            const skuA = variationA.sku ? variationA.sku.toUpperCase() : '';
+
+            const skuB = variationB.sku ? variationB.sku.toUpperCase() : '';
+
+            if (skuA < skuB) {
+
+              return -1;
+
+            }
+
+            if (skuA > skuB) {
+
+              return 1;
+
+            }
+
+          }
         }
 
-      } catch (error) {
-        console.log(error)
-      }
+        return 0;
+      });
+
+      const highestSku = items[items.length - 1].itemData.variations[0].itemVariationData.sku;
+
+      resolve(highestSku);
+    } catch (error) {
+      reject(error)
     }
-
-    // Sort items by SKU
-    items.sort((a, b) => {
-      if (a.type === "ITEM" && b.type === "ITEM") {
-
-        const variationA = a.itemData.variations[0];
-
-        const variationB = b.itemData.variations[0];
-
-        if (variationA && variationB) {
-
-          const skuA = variationA.sku ? variationA.sku.toUpperCase() : '';
-
-          const skuB = variationB.sku ? variationB.sku.toUpperCase() : '';
-
-          if (skuA < skuB) {
-
-            return -1;
-
-          }
-
-          if (skuA > skuB) {
-
-            return 1;
-
-          }
-
-        }
-      }
-
-      return 0;
-    });
-
-    const highestSku = items[items.length - 1].itemData.variations[0].sku;
-
-    resolve(highestSku);
   })
-  
-
 }
 
 async function createReverb(data) {
@@ -224,7 +226,7 @@ async function createSquareItem(data) {
                   type: 'ITEM_VARIATION',
                   id: '#create-item-varient',
                   itemVariationData: {
-                    sku: sku,
+                    sku: sku.toString(),
                     pricingType: 'FIXED_PRICING',
                     priceMoney: {
                       amount: price,
@@ -282,28 +284,28 @@ io.on('connection', async (socket) => {
 
     value = JSON.parse(value);
 
-    // var highestSku = await getHighestSku();
+    await getHighestSku().then(async highestSku => {
+      console.log("Highest: " + highestSku)
 
-    // console.log("Highest: " + highestSku)
+      new_sku = parseInt(highestSku) + 1;
 
-    // highestSku = highestSku + 1;
+      console.log("New Highest: " + new_sku)
 
-    // console.log("New Highest: " + highestSku)
+      // change sku in value.items array
+      await value.items.map((item, i) => {
+        value.items[i].sku = parseInt(new_sku.toString());
+        console.log(value.items[i].sku)
+        new_sku++;
+      })
 
-    // change sku in value.items array
-    // await value.items.map((item, i) => {
-    //   value.items[i].sku = new_sku;
-    //   console.log(value.items[i].sku)
-    //   new_sku++;
-    // })
+      await createSquareItem(value);
+      
+      await writeDatabase(JSON.stringify(value));
 
-    await createSquareItem(value);
-    
-    await writeDatabase(JSON.stringify(value));
+      io.to(socket.id).emit("created");
 
-    io.to(socket.id).emit("created");
-
-    io.emit("update", await readDatabase())
+      io.emit("update", await readDatabase())
+    }).catch(error => console.log("There was a error: " + str(error)));
   })
 
   socket.on("set-complete", async (data) => {
