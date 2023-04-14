@@ -126,7 +126,7 @@ async function getHighestSku() {
           const response = await squareClient.catalogApi.listCatalog(cursor);
           const { objects, cursor: nextCursor } = response.result;
           items = items.concat(objects);
-
+          
           if (!nextCursor) {
             hasMoreItems = false;
           } else {
