@@ -23,11 +23,12 @@ const SearchItemsPage = () => {
 
             let items_temp = []
 
-            data.map((card) => {
+            data.map((card, i) => {
                 card = JSON.parse(card)
                 console.log(card)
                 card.items.map((item) => {
                     console.log(item.make)
+                    item.originalID = card.transactionID
                     items_temp.push(item)
                 })
             })
@@ -35,8 +36,8 @@ const SearchItemsPage = () => {
             // Sort items by SKU
             items_temp.sort((a, b) => {
 
-                const skuA = a.sku ? a.sku.toUpperCase() : '';
-                const skuB = b.sku ? b.sku.toUpperCase() : '';
+                const skuA = a.sku ? a.sku : '';
+                const skuB = b.sku ? b.sku : '';
                 if (skuA < skuB) {
                     return -1;
                 }
@@ -61,7 +62,7 @@ const SearchItemsPage = () => {
           }}>
             <Box sx={{ height: "50px", display: "flex", flexDirection: "row", justifyContent: "center", paddingTop: "10px", paddingRight: "100px", alignItems: "center" }}>
                 <Box marginRight={1} marginTop={1} height="fit-content">
-                    <TextField style={inputStyle} size="small" id="searchInput" label="Search" variant="outlined" onChange={(event) => { setSearchItems(items.filter(s => ( s.sku.toLowerCase() + " " + s.make.toLowerCase() + " " + s.model.toLowerCase()).includes(event.target.value.toLowerCase()))) }} />
+                    <TextField style={inputStyle} size="small" id="searchInput" label="Search" variant="outlined" onChange={(event) => { setSearchItems(items.filter(s => ( s.sku + " " + s.make.toLowerCase() + " " + s.model.toLowerCase()).includes(event.target.value.toLowerCase()))) }} />
                 </Box>
                 {/* <Button sx={{ marginRight: 1, marginTop: 1 }} variant="contained">Search</Button> */}
             </Box>
@@ -76,8 +77,7 @@ const SearchItemsPage = () => {
                                 ({item.sku}) {item.make} {item.model}
                             </Box>
                             <Box marginRight="20px">
-                                {/* <Button variant="outlined" sx={{ marginRight: .5 }} onClick={() => navigate("/card/" + item.transactionID)}>Go to Listing</Button>
-                                <Button variant="contained" sx={{ marginLeft: .5 }}>Add to Label</Button> */}
+                                <Button variant="contained" sx={{ marginRight: .5 }} onClick={() => navigate("/card/" + item.originalID)}>Go to Listing</Button>
                             </Box>
                         </Box>
                     )
