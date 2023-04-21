@@ -149,6 +149,7 @@ async function getHighestSku() {
         } catch (error) {
           logToFile('Error while fetching catalog items: ' + error);
         }
+      }
 
       // Sort items by SKU  
       items.sort((a, b) => {
