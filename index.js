@@ -6,6 +6,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 require('dotenv').config()
 
+const fs = require('fs');
+
 const redis = require('redis');
 
 const pdf = require('html-pdf');
@@ -70,6 +72,17 @@ const reverbAPIUrl = "https://api.reverb.com/api/listings"
 
 // createSquareLabel()
 
+function logToFile(message) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}\n`;
+
+  fs.appendFile('log.txt', logMessage, (err) => {
+    if (err) {
+      console.error('Error writing to log file:', err);
+    }
+  });
+}
+
 async function createReverbListing(item) {
   return new Promise((resolve, reject) => {
     const url = reverbAPIUrl
@@ -126,20 +139,18 @@ async function getHighestSku() {
           const response = await squareClient.catalogApi.listCatalog(cursor);
           const { objects, cursor: nextCursor } = response.result;
           items = items.concat(objects);
-          
+
           if (!nextCursor) {
             hasMoreItems = false;
           } else {
-
-            cursor = nextCursor;  
+            cursor = nextCursor;
           }
 
         } catch (error) {
-          console.log(error)
+          logToFile('Error while fetching catalog items: ' + error);
         }
-      }
 
-      // Sort items by SKU
+      // Sort items by SKU  
       items.sort((a, b) => {
         if (a.type === "ITEM" && b.type === "ITEM") {
 
@@ -171,10 +182,20 @@ async function getHighestSku() {
         return 0;
       });
 
+      // Log the sorted items to the log file
+      logToFile('Sorted items: ' + JSON.stringify(items));
+
       const highestSku = items[items.length - 1].itemData.variations[0].itemVariationData.sku;
 
-      resolve(highestSku);
+      if (isNaN(highestSku)) {
+        logToFile('Highest SKU value is NaN: ' + highestSku);
+        reject('Highest SKU value is NaN');
+      } else {
+        resolve(highestSku);
+      }
+
     } catch (error) {
+      logToFile('Error in getHighestSku: ' + error);
       reject(error)
     }
   })
