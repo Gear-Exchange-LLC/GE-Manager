@@ -9,3 +9,5 @@ db*.json
 *.pdf
 
 code39.js
+
+log.txt
