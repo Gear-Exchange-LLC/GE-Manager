@@ -184,7 +184,12 @@ async function getHighestSku() {
       });
 
       // Log the sorted items to the log file
-      logToFile('Sorted items: ' + JSON.stringify(items));
+      logToFile('Sorted items: ' + JSON.stringify(items, (key, value) => {
+        if (typeof value === 'bigint') {
+          return value.toString();
+        }
+        return value;
+      }));
 
       const highestSku = items[items.length - 1].itemData.variations[0].itemVariationData.sku;
 
@@ -327,7 +332,7 @@ io.on('connection', async (socket) => {
       io.to(socket.id).emit("created");
 
       io.emit("update", await readDatabase())
-    }).catch(error => console.log("There was a error: " + str(error)));
+    }).catch(error => console.log("There was a error: " + error));
   })
 
   socket.on("set-complete", async (data) => {
