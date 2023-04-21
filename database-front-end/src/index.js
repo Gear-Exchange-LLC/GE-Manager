@@ -4,6 +4,7 @@ import './index.css';
 import CreateItem from './CreateItem';
 import Dashboard from "./Dashboard"
 import CardPage from './CardPage';
+import EditItem from "./EditItem"
 import {
   BrowserRouter,
   createBrowserRouter,
@@ -52,6 +53,7 @@ root.render(
                 <Routes>
                   <Route path='/create-item' exact={true} element={<CreateItem />} />
                   <Route path="/card/:id" element={<CardPage />} />
+                  <Route path="/edit/:id" element={<EditItem />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/search" element={<SearchItemsPage />} />
                   <Route path='*' element={<Navigate to="/dashboard" replace={true} />} />
