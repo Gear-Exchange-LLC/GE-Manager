@@ -84,7 +84,7 @@ function logToFile(message) {
 }
 
 async function createReverbListing(item) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => { 
     const url = reverbAPIUrl
 
     const data = {
