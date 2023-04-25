@@ -183,19 +183,11 @@ async function getHighestSku() {
         return 0;
       });
 
-      // Log the sorted items to the log file
-      logToFile('Sorted items: ' + JSON.stringify(items, (key, value) => {
-        if (typeof value === 'bigint') {
-          return value.toString();
-        }
-        return value;
-      }));
-
       const highestSku = items[items.length - 1].itemData.variations[0].itemVariationData.sku;
 
       if (isNaN(highestSku)) {
         logToFile('Highest SKU value is NaN: ' + highestSku);
-        reject('Highest SKU value is NaN');
+        resolve(highestSku)
       } else {
         resolve(highestSku);
       }
