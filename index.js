@@ -218,6 +218,7 @@ async function createSquareItem(data) {
     setTimeout(async () => {
       var make = item.make;
       var model = item.model;
+      var included = item.included
   
       var price = item.listPrice;
   
@@ -239,7 +240,7 @@ async function createSquareItem(data) {
             type: 'ITEM',
             id: '#create-item',
             itemData: {
-              name: `(${sku}) ${make} ${model}`,
+              name: `(${sku}) ${make} ${model} w/${included}`,
               variations: [
                 {
                   type: 'ITEM_VARIATION',
