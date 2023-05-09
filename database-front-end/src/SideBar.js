@@ -50,7 +50,7 @@ const SideBar = () => {
             paddingBlock: "10px",
             position: "relative",
           }}>
-            <Avatar />
+            {/* <Avatar /> */}
             <Box sx={{
               height: "100vh",
               position: "absolute",

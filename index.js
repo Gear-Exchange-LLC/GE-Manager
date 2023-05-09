@@ -84,7 +84,7 @@ function logToFile(message) {
 }
 
 async function createReverbListing(item) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => { 
     const url = reverbAPIUrl
 
     const data = {
@@ -211,13 +211,39 @@ async function createReverb(data) {
   })
 }
 
+// write a function to get tax objects from square
+async function getTaxObjects() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await squareClient.catalogApi.listCatalog(undefined, 'TAX');
+      const { objects } = response.result;
+
+      resolve(objects);
+    } catch (error) {
+      logToFile('Error in getTaxObjects: ' + error);
+      reject(error);
+    }
+  })
+}
+
+getTaxObjects()
 
 async function createSquareItem(data) {
+
+  var taxObjects = await getTaxObjects();
+  var taxID = "";
+
+  taxObjects.map((tax) => {
+    if (tax.taxData.name.includes("Oklahoma")) {
+      taxID = tax.id;
+    }
+  })
 
   data.items.map(async (item, i) => {
     setTimeout(async () => {
       var make = item.make;
       var model = item.model;
+      var included = item.included
   
       var price = item.listPrice;
   
@@ -231,7 +257,10 @@ async function createSquareItem(data) {
       var stock = item.stock;
   
       var sku = item.sku;
-  
+
+      console.log('Tax ID: ' + taxID)
+      logToFile('Tax ID: ' + taxID)
+
       try {
         const objectResponse = await squareClient.catalogApi.upsertCatalogObject({
           idempotencyKey: crypto.randomUUID(),
@@ -239,7 +268,10 @@ async function createSquareItem(data) {
             type: 'ITEM',
             id: '#create-item',
             itemData: {
-              name: `(${sku}) ${make} ${model}`,
+              name: `(${sku}) ${make} ${model} w/${included}`,
+              taxIds: [
+                taxID
+              ],
               variations: [
                 {
                   type: 'ITEM_VARIATION',
@@ -274,7 +306,9 @@ async function createSquareItem(data) {
             }
           ]
         });
-  
+
+        console.log('Created Item: ' + objectResponse.result.catalogObject.id);
+        logToFile('Created Item: ' + objectResponse.result.catalogObject.id);
       } catch(error) {
         console.log(error);
       }
