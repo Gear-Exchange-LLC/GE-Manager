@@ -2,7 +2,7 @@ node_modules
 
 .env
 
-site/*
+Site/*
 
 db*.json
 
