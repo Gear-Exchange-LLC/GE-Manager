@@ -259,7 +259,7 @@ async function createSquareItem(data) {
               type: 'ITEM',
               id: '#create-item',
               itemData: {
-                name: `(${sku}) ${make} ${model} w/${included}`,
+                name: `(${sku}) ${make} ${model} ${included ? "w/" + included : ""}`,
                 taxIds: [
                   taxID
                 ],
