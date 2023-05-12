@@ -129,7 +129,7 @@ function CreateItem() {
           }} >
             <DesktopDatePicker
               label="Date"
-              inputFormat="mm/dd/yyyy"
+              inputFormat="MM/dd/yyyy"
               renderInput={(params) => <TextField size="small" sx={{ margin: "8px", marginLeft: "0px" }} {...params} />}
               value={value}
               onChange={handleChange}
