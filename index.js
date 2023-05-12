@@ -317,7 +317,7 @@ async function createSquareItem(data) {
 
 app.use(cors())
 
-app.use(express.static(path.join(__dirname, "Site")))
+app.use(express.static(path.join(__dirname, "database-front-end/build")))
 app.use(express.static(path.join(__dirname, "barcodeFont")))
 
 app.get('/barcodeFont.ttf', (req, res) => {
@@ -325,7 +325,7 @@ app.get('/barcodeFont.ttf', (req, res) => {
 });
 
 app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, "site/index.html"));
+    res.sendFile(path.join(__dirname, "database-front-end/build/index.html"));
 });
 
 io.on('connection', async (socket) => {
