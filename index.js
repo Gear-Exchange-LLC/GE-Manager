@@ -10,29 +10,17 @@ const fs = require('fs');
 
 const redis = require('redis');
 
-const pdf = require('html-pdf');
-
-const { print } = require('pdf-to-printer');
-
-const client = redis.createClient(6379);
-
-const { exec } = require('child_process');
-
-var PDFDocument = require('pdfkit');
-
 const crypto = require('crypto');
 
 const { writeDatabase, readDatabase, connectDatabase, deleteDatabase } = require("./db-manager")
 
-const { Client, Environment, ApiError } = require('square');
-const { create } = require('domain');
+const { Client, Environment } = require('square');
 const path = require('path');
-const { read, file } = require('pdfkit');
 
 // Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Production
+  environment: Environment.Sandbox
 });
 // Socket Server
 const io = new Server(server, {
@@ -41,7 +29,7 @@ const io = new Server(server, {
     }
 });
 
-const reverbAPIUrl = "https://api.reverb.com/api/listings"
+const reverbAPIUrl = "https://sandbox.reverb.com/api/listings"
 
 // async function createSquareLabel() {
 //   // write me a function that makes a pdf file that has the item name, sku and price from square catelog item json array
@@ -229,90 +217,101 @@ async function getTaxObjects() {
 getTaxObjects()
 
 async function createSquareItem(data) {
+  return new Promise(async (resolve, reject) => {
 
-  var taxObjects = await getTaxObjects();
-  var taxID = "";
+    var taxObjects = await getTaxObjects();
+    var taxID = "";
 
-  taxObjects.map((tax) => {
-    if (tax.taxData.name.includes("Oklahoma")) {
-      taxID = tax.id;
-    }
-  })
+    var squareIDs = [];
 
-  data.items.map(async (item, i) => {
-    setTimeout(async () => {
-      var make = item.make;
-      var model = item.model;
-      var included = item.included
-  
-      var price = item.listPrice;
-  
-      if (!price.includes(".")) {
-        price = price + "00"
+    await taxObjects.map((tax) => {
+      if (tax.taxData.name.includes("Oklahoma")) {
+        taxID = tax.id;
       }
-      else {
-        price = price.split(".")[0] + price.split(".")[1]
-      }
-  
-      var stock = item.stock;
-  
-      var sku = item.sku;
+    })
 
-      console.log('Tax ID: ' + taxID)
-      logToFile('Tax ID: ' + taxID)
+    await data.items.map(async (item, i) => {
+      setTimeout(async () => {
+        var make = item.make;
+        var model = item.model;
+        var included = item.included
+    
+        var price = item.listPrice;
+    
+        if (!price.includes(".")) {
+          price = price + "00"
+        }
+        else {
+          price = price.split(".")[0] + price.split(".")[1]
+        }
+    
+        var stock = item.stock;
+    
+        var sku = item.sku;
 
-      try {
-        const objectResponse = await squareClient.catalogApi.upsertCatalogObject({
-          idempotencyKey: crypto.randomUUID(),
-          object: {
-            type: 'ITEM',
-            id: '#create-item',
-            itemData: {
-              name: `(${sku}) ${make} ${model} w/${included}`,
-              taxIds: [
-                taxID
-              ],
-              variations: [
-                {
-                  type: 'ITEM_VARIATION',
-                  id: '#create-item-varient',
-                  itemVariationData: {
-                    sku: sku.toString(),
-                    pricingType: 'FIXED_PRICING',
-                    priceMoney: {
-                      amount: price,
-                      currency: 'USD'
-                    },
-                    trackInventory: true
+        console.log('Tax ID: ' + taxID)
+        logToFile('Tax ID: ' + taxID)
+
+        try {
+          const objectResponse = await squareClient.catalogApi.upsertCatalogObject({
+            idempotencyKey: crypto.randomUUID(),
+            object: {
+              type: 'ITEM',
+              id: '#create-item',
+              itemData: {
+                name: `(${sku}) ${make} ${model} w/${included}`,
+                taxIds: [
+                  taxID
+                ],
+                variations: [
+                  {
+                    type: 'ITEM_VARIATION',
+                    id: '#create-item-varient',
+                    itemVariationData: {
+                      sku: sku.toString(),
+                      pricingType: 'FIXED_PRICING',
+                      priceMoney: {
+                        amount: price,
+                        currency: 'USD'
+                      },
+                      trackInventory: true
+                    }
                   }
-                }
-              ]
-            }
-          }
-        });
-  
-        const stockResponse = await squareClient.inventoryApi.batchChangeInventory({
-          idempotencyKey: crypto.randomUUID(),
-          changes: [
-            {
-              type: 'PHYSICAL_COUNT',
-              physicalCount: {
-                catalogObjectId: objectResponse.result.catalogObject.itemData.variations[0].id,
-                state: 'IN_STOCK',
-                locationId: objectResponse.result.catalogObject.itemData.variations[0].itemVariationData.locationOverrides[0].locationId,
-                quantity: stock.toString(),
-                occurredAt: new Date().toISOString()
+                ]
               }
             }
-          ]
-        });
+          });
+    
+          const stockResponse = await squareClient.inventoryApi.batchChangeInventory({
+            idempotencyKey: crypto.randomUUID(),
+            changes: [
+              {
+                type: 'PHYSICAL_COUNT',
+                physicalCount: {
+                  catalogObjectId: objectResponse.result.catalogObject.itemData.variations[0].id,
+                  state: 'IN_STOCK',
+                  locationId: objectResponse.result.catalogObject.itemData.variations[0].itemVariationData.locationOverrides[0].locationId,
+                  quantity: stock.toString(),
+                  occurredAt: new Date().toISOString()
+                }
+              }
+            ]
+          });
 
-        console.log('Created Item: ' + objectResponse.result.catalogObject.id);
-        logToFile('Created Item: ' + objectResponse.result.catalogObject.id);
-      } catch(error) {
-        console.log(error);
-      }
-    }, i * 1000)
+          console.log('Created Item: ' + objectResponse.result.catalogObject.id);
+          logToFile('Created Item: ' + objectResponse.result.catalogObject.id);
+
+          squareIDs.push(objectResponse.result.catalogObject.id);
+
+          if (i === data.items.length - 1) {
+            resolve(squareIDs);
+          }
+        } catch(error) {
+          console.log(error);
+          reject(error)
+        }
+      }, i * 1000)
+    })
   })
 }
 
@@ -333,26 +332,29 @@ io.on('connection', async (socket) => {
   console.log('a user connected: ' + socket.id);
 
   socket.on("create-item", async (value) => {
-    console.log(value);
 
     value = JSON.parse(value);
 
     await getHighestSku().then(async highestSku => {
-      console.log("Highest: " + highestSku)
 
       new_sku = parseInt(highestSku) + 1;
-
-      console.log("New Highest: " + new_sku)
 
       // change sku in value.items array
       await value.items.map((item, i) => {
         value.items[i].sku = parseInt(new_sku.toString());
-        console.log(value.items[i].sku)
         new_sku++;
       })
 
-      await createSquareItem(value);
-      
+      var squareIDs = await createSquareItem(value);
+
+      console.log(squareIDs);
+
+      await value.items.map((item, i) => {
+        value.items[i].squareID = squareIDs[i];
+      })
+
+      console.log(value.toString() + " was created");
+
       await writeDatabase(JSON.stringify(value));
 
       io.to(socket.id).emit("created");
