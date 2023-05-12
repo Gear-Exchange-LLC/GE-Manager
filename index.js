@@ -20,7 +20,7 @@ const path = require('path');
 // Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Sandbox
+  environment: Environment.Production
 });
 // Socket Server
 const io = new Server(server, {
@@ -29,7 +29,7 @@ const io = new Server(server, {
     }
 });
 
-const reverbAPIUrl = "https://sandbox.reverb.com/api/listings"
+const reverbAPIUrl = "https://api.reverb.com/api/listings"
 
 // async function createSquareLabel() {
 //   // write me a function that makes a pdf file that has the item name, sku and price from square catelog item json array
