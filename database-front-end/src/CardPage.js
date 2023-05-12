@@ -93,10 +93,6 @@ function CardPage() {
           header: 'Purchase Amount',
         },
         {
-          accessorKey: "squareID",
-          header: "Square ID"
-        },
-        {
           header: ' ',
         }
       ];
@@ -272,8 +268,7 @@ function CardPage() {
                     <TableCell>{row.stock}</TableCell>
                     <TableCell>${row.listPrice.includes(".") ? row.listPrice : row.listPrice + ".00"}</TableCell>
                     <TableCell>${row.purchaseAmount.includes(".") ? row.purchaseAmount : row.purchaseAmount + ".00"}</TableCell>
-                    <TableCell>{row.squareID}</TableCell>
-                    <TableCell sx={{margin: 0, padding: 0, width: "fit-content"}}><Button color="primary" variant="contained" size="small" sx={{margin: 0}} onClick={() => document.location.href = ("https://squareup.com/dashboard/items/library/" + row.squareID)}>Go to Square Item</Button></TableCell>
+                    <TableCell sx={{margin: 0, padding: 0, width: "fit-content"}}>{row.squareID ? <Button color="primary" variant="contained" size="small" sx={{margin: 0}} onClick={() => document.location.href = ("https://squareup.com/dashboard/items/library/" + row.squareID)}>Go to Square Item</Button> : <></>}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
