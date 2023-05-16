@@ -1,4 +1,4 @@
-import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar, CircularProgress } from "@mui/material";
+import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar, CircularProgress, InputAdornment, TableHead, TableBody, TableRow, TableCell, Select, MenuItem } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
 import { SocketContext } from "./context/SocketContext";
@@ -7,16 +7,20 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { useParams } from "react-router-dom";
 
-import EditTable from "material-ui-table-edit"
-
 import uuid from "react-uuid"
 
 import dayjs from "dayjs"
 
 import { DesktopDatePicker } from "@mui/x-date-pickers";
-import ReactTable from "./Table";
 import { display, width } from "@mui/system";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+
+import EditTable from "./EditTable"
+
+import ReactDOM from "react-dom";
+import styled, { createGlobalStyle } from "styled-components";
+import { useForm, useField, splitFormProps } from "react-form";
+import { useTable } from "react-table";
 
 
 function EditItem() {
@@ -28,7 +32,7 @@ function EditItem() {
   const [data, setData] = React.useState({});
 
   const [date, setDate] = React.useState()
-  const [FirstName, setFirstName] = React.useState("");
+  const [FirstName, setFirstName] = React.useState();
   const [LastName, setLastName] = React.useState("");
   const [DriversLicenseNum, setDriversLicenseNum] = React.useState();
   const [PhoneNumber, setPhoneNumber] = React.useState();
@@ -42,8 +46,6 @@ function EditItem() {
   const [openSnack, setOpenSnack] = React.useState(false);
 
   const [loading, setLoading] = React.useState(false);
-
-  socket.emit("get-data");
 
   function createItem() {
 
@@ -74,10 +76,20 @@ function EditItem() {
   useEffect(() => {
 
     socket.on("data", (data) => {
+      console.log("Socket")
       data.map((item) => {
         var item = JSON.parse(item)
         if (item.transactionID == id) {
-          setData(item)
+          setFirstName(item.firstName)
+          setLastName(item.lastName)
+          setDriversLicenseNum(item.driversLicense)
+          setPhoneNumber(item.phoneNumber)
+          setStoreCredit(item.storeCredit)
+          setSellCheck(item.sell)
+          setTransactionID(item.transactionID)
+          
+          setItems(item.items)
+          setDate(item.date)
         }
       })
     })
@@ -86,11 +98,9 @@ function EditItem() {
         navigate("/card/test")
         setLoading(false);
     })
-  })
-
-  const [value, setValue] = React.useState(
-    new dayjs(),
-  );
+    
+    socket.emit("get-data");
+  }, [])
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -101,7 +111,7 @@ function EditItem() {
   };
 
   const handleChange = (newValue) => {
-    setValue(newValue);
+    setDate(newValue);
   };
 
   const action = (
@@ -145,12 +155,13 @@ function EditItem() {
           }} >
             <DesktopDatePicker
               label="Date"
-              inputFormat="mm/dd/yyyy"
+              inputFormat="MM/dd/yyyy"
               renderInput={(params) => <TextField size="small" sx={{ margin: "8px", marginLeft: "0px" }} {...params} />}
-              value={value}
+              value={date}
               onChange={handleChange}
             />
-            <TextField sx={{margin: "8px", width: "450px"}} size="small" id="transactionIDInput" label="Transaction ID" variant="outlined" InputLabelProps={{ shrink: true }} value={data.transactionID} onChange={(event) => { setTransactionID(event.target.value) }} />
+            {console.log(date)}
+            <TextField sx={{margin: "8px", width: "450px"}} size="small" id="transactionIDInput" label="Transaction ID" variant="outlined" InputLabelProps={{ shrink: true }} value={TransactionID} onChange={(event) => { setTransactionID(event.target.value) }} />
           </Box>
           <Typography variant="h3" marginTop={5} marginBottom={2}>Customer Info:</Typography>
           <Box sx={{
@@ -159,16 +170,16 @@ function EditItem() {
             flexWrap: "wrap"
           }}>
             <Box marginRight={1} marginTop={1} height="fit-content">
-              <TextField sx={inputStyle} size="small" id="firstNameInput" label="First Name" variant="outlined" InputLabelProps={{ shrink: true }} value={data.firstName} onChange={(event) => { setFirstName(event.target.value) }} />
+              <TextField sx={inputStyle} size="small" id="firstNameInput" label="First Name" variant="outlined" InputLabelProps={{ shrink: true }} value={FirstName} onChange={(event) => { setFirstName(event.target.value); console.log(event.target.value) }} />
             </Box>
             <Box marginRight={1} marginTop={1} height="fit-content">
-              <TextField sx={inputStyle} size="small" id="lastNameInput" label="Last Name" variant="outlined" InputLabelProps={{ shrink: true }} value={data.lastName} onChange={(event) => { setLastName(event.target.value) }} />
+              <TextField sx={inputStyle} size="small" id="lastNameInput" label="Last Name" variant="outlined" InputLabelProps={{ shrink: true }} value={LastName} onChange={(event) => { setLastName(event.target.value) }} />
             </Box>
             <Box marginRight={1} marginTop={1} height="fit-content">
-              <TextField sx={inputStyle} size="small" id="driversLicenseInput" label="Drivers License #" InputLabelProps={{ shrink: true }} value={data.driversLicense} variant="outlined" onChange={(event) => { setDriversLicenseNum(event.target.value) }} />
+              <TextField sx={inputStyle} size="small" id="driversLicenseInput" label="Drivers License #" InputLabelProps={{ shrink: true }} value={DriversLicenseNum} variant="outlined" onChange={(event) => { setDriversLicenseNum(event.target.value) }} />
             </Box>
             <Box marginRight={1} marginTop={1} height="fit-content">
-              <TextField sx={inputStyle} size="small" id="phoneNumberInput" label="Phone Number" variant="outlined" InputLabelProps={{ shrink: true }} value={data.phoneNumber} onChange={(event) => { setPhoneNumber(event.target.value) }} />
+              <TextField sx={inputStyle} size="small" id="phoneNumberInput" label="Phone Number" variant="outlined" InputLabelProps={{ shrink: true }} value={PhoneNumber} onChange={(event) => { setPhoneNumber(event.target.value) }} />
             </Box>
           </Box>
 {/* 
@@ -178,7 +189,7 @@ function EditItem() {
           </FormGroup> */}
           <Typography variant="h3" margin={0} marginTop={4} >Items:</Typography>
           <Box sx={{ width: "100%" }}>
-            <ReactTable setItems={setItems} />
+            <EditTable setItems={setItems} tableInitialData={items} />
           </Box>
           <Box sx={{
             width: "100%",
