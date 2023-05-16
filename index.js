@@ -381,7 +381,7 @@ io.on('connection', async (socket) => {
 
   socket.on("get-data", async () => {
     const data = await readDatabase()
-    io.to(socket.id).emit("data", data)
+    socket.emit("data", data)
   })
 
   socket.on("create-reverb", async (data) => {
