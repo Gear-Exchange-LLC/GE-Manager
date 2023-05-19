@@ -41,3 +41,10 @@ SQUARE_ACCESS_TOKEN=<Production Square Token>
 
 REVERB_ACCESS_TOKEN=<Production Reverb Token>
 ```
+
+# Reverb API Commands
+
+### Get Listing By SKU
+```
+curl -XGET -H "Content-Type: application/hal+json" -H "Accept: application/hal+json" -H "Accept-Version: 3.0" -H "Authorization: Bearer [personal_token]" https://api.reverb.com/api/my/listings?sku=[sku]&state=all
+```
