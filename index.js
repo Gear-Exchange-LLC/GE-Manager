@@ -22,6 +22,7 @@ const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
   environment: Environment.Production
 });
+
 // Socket Server
 const io = new Server(server, {
     cors: {
@@ -38,6 +39,9 @@ const reverbAPIUrl = "https://api.reverb.com/api/listings"
 //   const item = catalogObject.object.item_data;
 
 //   const doc = new PDFDocument();
+
+
+
 
 //   doc.pipe(fs.createWriteStream('output.pdf'));
 
