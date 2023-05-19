@@ -101,7 +101,8 @@ async function createReverbListing(item) {
       inventory: item.stock,
       offers_enabled: false,
       handmade: false,
-  }
+      seller_cost: item.purchaseAmount.includes(".") ? item.purchaseAmount : item.purchaseAmount + ".00"
+    }
 
     const headers = {
       headers: {
