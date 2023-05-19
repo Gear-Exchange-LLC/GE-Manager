@@ -44,7 +44,7 @@ npm install
 
 ## Step 4
 
-Then, your going to need to edit the `database-front-end/SocketContext.js` file with the ip or hostname of your server.
+Then, your going to need to edit the `database-front-end/src/context/SocketContext.js` file with the ip or hostname of your server.
 
 ## Step 5
 
