@@ -1,6 +1,6 @@
-# GE-Database
+# GE-Manager
 
-GE-Database is a program that I wrote for my work to help with effeciency.
+GE-Manager is a program that I wrote for my work to help with effeciency.
 
 # Dependencies
 
