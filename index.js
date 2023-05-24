@@ -17,6 +17,8 @@ const { writeDatabase, readDatabase, connectDatabase, deleteDatabase } = require
 const { Client, Environment } = require('square');
 const path = require('path');
 
+const rateLimit = require('express-rate-limit');
+
 // Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -320,7 +322,16 @@ async function createSquareItem(data) {
   })
 }
 
+// Set the rate limit
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests from this IP, please try again after an hour"
+});
+
 app.use(cors())
+
+app.use('/*', limiter);
 
 app.use(express.static(path.join(__dirname, "database-front-end/build")))
 app.use(express.static(path.join(__dirname, "barcodeFont")))
