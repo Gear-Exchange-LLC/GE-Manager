@@ -1,4 +1,4 @@
-import { Box, AppBar, Toolbar, Typography, Button, Container, Card, CardHeader, CardContent, Avatar, IconButton } from "@mui/material";
+import { Box, AppBar, Toolbar, Typography, Button, Container, Card, CardHeader, CardContent, Avatar, IconButton, Select, MenuItem } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { SocketContext } from "./context/SocketContext";
 import StorageIcon from '@mui/icons-material/Storage';
@@ -10,8 +10,19 @@ import { Add } from "@mui/icons-material";
 
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
-function custom_sort(a, b) {
-  return new Date(a.timeCreated).getTime() - new Date(b.timeCreated).getTime();
+function custom_sort(a, b, sortOrder, sortType) {
+  a = JSON.parse(a)
+  b = JSON.parse(b)
+  
+  console.log(a)
+  console.log(b)
+  if (sortType === 'alphabetical') {
+    return sortOrder === 'asc' ? a.firstName.localeCompare(b.firstName) : b.firstName.localeCompare(a.firstName);
+  } else if (sortType === 'items') {
+    return sortOrder === 'asc' ? b.items.length - a.items.length : a.items.length - b.items.length;
+  } else {
+    return sortOrder === 'asc' ? new Date(a.timeCreated).getTime() - new Date(b.timeCreated).getTime() : new Date(b.timeCreated).getTime() - new Date(a.timeCreated).getTime();
+  }
 }
 
 function Dashboard() {
@@ -19,6 +30,8 @@ function Dashboard() {
     const socket = useContext(SocketContext);
 
     const [data, setData] = React.useState([]);
+    const [sortOrder, setSortOrder] = React.useState('asc');  
+    const [sortType, setSortType] = React.useState('time');
 
     const navigate = useNavigate()
 
@@ -31,23 +44,39 @@ function Dashboard() {
         })
 
         socket.emit("request-update");
-      }, [])
+    }, [])
+
+    const handleSortChange = () => {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    }
+
+    const handleSortTypeChange = (event) => {
+      setSortType(event.target.value);
+    }
 
     return (
-    <Box sx={{
-      /* background-color: #282c34; */
-      height: "calc(100vh - 60px)",
-      overflow: "scroll",
-      width: "100%"
-    }}>
         <Box sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          height: "calc(100vh - 60px)",
+          overflow: "scroll",
           width: "100%"
         }}>
-            <Typography variant="h3" marginTop={2}>In Progress Tickets:</Typography>
-            {data.length == 0 ? (<Typography variant="h3" marginTop={3}>No Items</Typography>) :  data.sort(custom_sort).reverse().map(function (value, index, array) {
+            <Box sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%"
+            }}>
+                <Typography variant="h3" marginTop={2}>In Progress Tickets:</Typography>
+                <Button onClick={handleSortChange}>Sort</Button> 
+                <Select
+                  value={sortType}
+                  onChange={handleSortTypeChange}
+                >
+                  <MenuItem value="time">Time</MenuItem>
+                  <MenuItem value="alphabetical">Alphabetical</MenuItem>
+                  <MenuItem value="items">Number of Items</MenuItem>
+                </Select>
+                {data.length == 0 ? (<Typography variant="h3" marginTop={3}>No Items</Typography>) :  data.sort((a, b) => custom_sort(a, b, sortOrder, sortType)).map(function (value, index, array) {
 
                 value = JSON.parse(value)
 
@@ -68,7 +97,7 @@ function Dashboard() {
             })} 
 
             { data.length == 0 ? <></> : <Typography variant="h3" marginTop={2}>Completed Tickets:</Typography>}
-            {data.sort(custom_sort).reverse().map(function (value, index, array) {
+            {data.sort((a, b) => custom_sort(a, b, sortOrder, sortType)).map(function (value, index, array) {
 
                 value = JSON.parse(value)
 
