@@ -5,16 +5,12 @@ import { SocketContext } from "./context/SocketContext";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-import EditTable from "material-ui-table-edit"
-
 import uuid from "react-uuid"
 
 import dayjs from "dayjs"
 
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import ReactTable from "./Table";
-import { display, width } from "@mui/system";
-import { Link, Navigate, useNavigate } from "react-router-dom";
 
 
 function CreateItem() {
@@ -155,11 +151,6 @@ function CreateItem() {
               <TextField sx={inputStyle} size="small" id="phoneNumberInput" label="Phone Number" variant="outlined" onChange={(event) => { setPhoneNumber(event.target.value) }} />
             </Box>
           </Box>
-{/* 
-          <FormGroup>
-            <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setStoreCredit(true) } else { setStoreCredit(false) }}} />} label="Store Credit" />
-            <FormControlLabel control={<Checkbox onChange={(event) => { if (event.target.value == "on") { setSellCheck(true) } else { setSellCheck(false) }}} />} label="Sell" />
-          </FormGroup> */}
           <Typography variant="h3" margin={0} marginTop={4} >Items:</Typography>
           <Box sx={{ width: "100%" }}>
             <ReactTable setItems={setItems} />
