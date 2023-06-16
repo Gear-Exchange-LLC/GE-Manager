@@ -8,8 +8,6 @@ require('dotenv').config()
 
 const fs = require('fs');
 
-const redis = require('redis');
-
 const crypto = require('crypto');
 
 const { writeDatabase, readDatabase, connectDatabase, deleteDatabase } = require("./db-manager")
@@ -33,38 +31,6 @@ const io = new Server(server, {
 });
 
 const reverbAPIUrl = "https://api.reverb.com/api/listings"
-
-// async function createSquareLabel() {
-//   // write me a function that makes a pdf file that has the item name, sku and price from square catelog item json array
-
-//   const catalogObject = await squareClient.catalogApi.retrieveCatalogObject("Q2F0YWxvZ0JvYXJkOjEwMjU5NjU5NjU2MzY=");
-//   const item = catalogObject.object.item_data;
-
-//   const doc = new PDFDocument();
-
-
-
-
-//   doc.pipe(fs.createWriteStream('output.pdf'));
-
-//   doc.fontSize(25)
-//     .text(`${item.name}`, 100, 100);
-  
-//   doc.fontSize(25)
-//     .text(`SKU: ${item.variations[0].sku}`, 100, 200);
-  
-//   doc.fontSize(25)
-//     .text(`Price: $${item.variations[0].price_money.amount / 100}`, 100, 300);
-
-//   doc.end();
-
-//   // save the document to a file
-//   doc.pipe(fs.createWriteStream('output.pdf'));
-
-//   return doc;
-// }
-
-// createSquareLabel()
 
 function logToFile(message) {
   const timestamp = new Date().toISOString();
