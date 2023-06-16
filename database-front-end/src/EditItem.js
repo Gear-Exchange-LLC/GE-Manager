@@ -1,35 +1,20 @@
-import { Box, AppBar, Toolbar, Typography, Button, TextField, Checkbox, FormGroup, FormControlLabel, Snackbar, CircularProgress, InputAdornment, TableHead, TableBody, TableRow, TableCell, Select, MenuItem } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import React, { useState, useEffect, useContext, dispatch, useReducer } from "react";
+import { Box, Typography, Button, TextField, Snackbar, CircularProgress } from "@mui/material";
+import React, { useEffect, useContext } from "react";
 import { SocketContext } from "./context/SocketContext";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { useParams } from "react-router-dom";
 
-import uuid from "react-uuid"
-
-import dayjs from "dayjs"
-
-import { DesktopDatePicker } from "@mui/x-date-pickers";
-import { display, width } from "@mui/system";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import EditTable from "./EditTable"
-
-import ReactDOM from "react-dom";
-import styled, { createGlobalStyle } from "styled-components";
-import { useForm, useField, splitFormProps } from "react-form";
-import { useTable } from "react-table";
-
 
 function EditItem() {
   
   const socket = useContext(SocketContext);
 
   const { id } = useParams();
-
-  const [data, setData] = React.useState({});
 
   const [date, setDate] = React.useState()
   const [FirstName, setFirstName] = React.useState();
