@@ -27,6 +27,7 @@ import { AppBar, Toolbar } from '@mui/material';
 import theme from './theme';
 import SideBar from './SideBar';
 import { Box } from '@mui/system';
+import { Button } from '@mui/material';
 import SearchItemsPage from './SearchItemsPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -48,6 +49,7 @@ root.render(
                     <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
                       Gear Exchange DB Manager
                     </Typography>
+                    <Button variant='contained' color="secondary" onClick={() => window.document.documentElement.requestFullscreen()}>Fullscreen</Button>
                   </Toolbar>
                 </AppBar>
                 <Routes>
