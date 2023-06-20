@@ -14,7 +14,7 @@ function EditItem() {
   
   const socket = useContext(SocketContext);
 
-  const { id } = useParams();
+  const { id } = useParams(); 
 
   const [date, setDate] = React.useState()
   const [FirstName, setFirstName] = React.useState();
