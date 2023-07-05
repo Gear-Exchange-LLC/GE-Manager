@@ -1,6 +1,3 @@
-const fs = require('fs');
-const { resolve } = require('path');
-
 const redis = require("redis");
 
 const client = redis.createClient()

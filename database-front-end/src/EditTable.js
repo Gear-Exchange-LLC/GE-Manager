@@ -1,8 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import styled, { createGlobalStyle } from "styled-components";
-import { useForm, useField, splitFormProps } from "react-form";
-import { useTable } from "react-table";
+import styled from "styled-components";
 import { Button, Box, Checkbox, TextField, InputAdornment, TableHead, TableBody, TableRow, TableCell, Select, MenuItem } from "@mui/material";
 import { useEffect } from "react";
 

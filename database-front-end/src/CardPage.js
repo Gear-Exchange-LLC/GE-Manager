@@ -2,11 +2,9 @@ import React, { useContext, useEffect, useState, useMemo } from "react";
 import { SocketContext } from "./context/SocketContext";
 import { useParams } from "react-router-dom";
 
-import MaterialReactTable from 'material-react-table';
-import { Box, Button, Grid, useTheme, AppBar, Toolbar, Typography, Stack, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress } from "@mui/material";
-import { width } from "@mui/system";
+import { Box, Button, useTheme, Typography, Stack, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, CircularProgress } from "@mui/material";
 
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function CardPage() {
 

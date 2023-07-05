@@ -1,14 +1,8 @@
 import React, { useContext, useState } from "react";
-import { Box,  Button, Avatar } from "@mui/material";
-import { socket, SocketContext } from "./context/SocketContext";
-import StorageIcon from '@mui/icons-material/Storage';
-import AddIcon from '@mui/icons-material/Add';
-
-import { Add } from "@mui/icons-material";
+import { Box } from "@mui/material";
+import { SocketContext } from "./context/SocketContext";
 
 import { Link, useNavigate } from "react-router-dom";
-
-import DashboardIcon from '@mui/icons-material/Dashboard';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
@@ -19,7 +13,6 @@ const SideBar = () => {
 
   const [ location, setLocation ] = useState(window.location.pathname);
 
-  const socket = useContext(SocketContext);
 
     const StyledLink = styled(Link)`
       color: white;

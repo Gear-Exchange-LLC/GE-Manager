@@ -7,12 +7,8 @@ import CardPage from './CardPage';
 import EditItem from "./EditItem"
 import {
   BrowserRouter,
-  createBrowserRouter,
-  createRoutesFromElements,
   Route,
   Routes,
-  RouterProvider,
-  Redirect,
   Navigate,
 } from "react-router-dom";
 import { SocketContext, socket } from './context/SocketContext';

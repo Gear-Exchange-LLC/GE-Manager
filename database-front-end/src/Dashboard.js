@@ -1,14 +1,10 @@
-  import { Box, AppBar, Toolbar, Typography, Button, Container, Card, CardHeader, CardContent, Avatar, IconButton, Select, MenuItem, TextField } from "@mui/material";
+  import { Box, Typography, Button, Card, CardContent, Select, MenuItem, TextField } from "@mui/material";
   import React, { useContext, useEffect } from "react";
   import { SocketContext } from "./context/SocketContext";
-  import StorageIcon from '@mui/icons-material/Storage';
-  import AddIcon from '@mui/icons-material/Add';
 
-  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-  import { solid, regular, brands, icon } from '@fortawesome/fontawesome-svg-core/import.macro'
-  import { Add, ArrowUpward, SearchTwoTone } from "@mui/icons-material";
+  import { ArrowUpward } from "@mui/icons-material";
 
-  import { Link, Navigate, useNavigate } from "react-router-dom";
+  import { useNavigate } from "react-router-dom";
 
   function custom_sort(a, b, sortOrder, sortType) {
     a = JSON.parse(a)
