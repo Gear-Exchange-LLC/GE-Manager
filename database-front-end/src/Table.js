@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, Box, Checkbox, TextField, InputAdornment, TableHead, TableBody, TableRow, TableCell, Select, MenuItem } from "@mui/material";
+import { useTable, useSortBy, usePagination, useRowSelect } from "react-table";
 
 const TableInput = props => {
   const { column, row, cell, updateData } = props;
