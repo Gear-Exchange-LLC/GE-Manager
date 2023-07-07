@@ -10,7 +10,7 @@ const fs = require('fs');
 
 const crypto = require('crypto');
 
-const { writeDatabase, readDatabase, connectDatabase, deleteDatabase, readDatabaseSKU } = require("./db-manager")
+const { writeDatabase, readDatabase, connectDatabase, deleteDatabase, readDatabaseSKU, setDatabaseSKU } = require("./db-manager")
 
 const { Client, Environment } = require('square');
 const path = require('path');
@@ -97,6 +97,8 @@ async function getHighestSku() {
       var currentSKU = await readDatabaseSKU();
 
       currentSKU = parseInt(currentSKU) + 1;
+
+      await setDatabaseSKU(currentSKU);
 
       resolve(currentSKU);
 
@@ -265,7 +267,7 @@ io.on('connection', async (socket) => {
 
     await getHighestSku().then(async highestSku => {
 
-      new_sku = parseInt(highestSku) + 1;
+      new_sku = parseInt(highestSku);
 
       // change sku in value.items array
       await value.items.map((item, i) => {
