@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Button, Box, Checkbox, TextField, InputAdornment, TableHead, TableBody, TableRow, TableCell, Select, MenuItem } from "@mui/material";
 import { useEffect } from "react";
 
+import { useTable } from "react-table";
+
 const TableInput = props => {
   const { column, row, cell, updateData } = props;
   const onChange = e => updateData(row.index, column.id, e.target.value);
