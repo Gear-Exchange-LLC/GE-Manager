@@ -1,4 +1,4 @@
-const redis = require("redis");
+ const redis = require("redis");
 
 const client = redis.createClient()
 
@@ -19,17 +19,44 @@ module.exports.readDatabase = async function () {
         for (let i = 0; i < keys.length; i++) {
             const value = JSON.parse(await client.get(keys[i]));
 
-            data.push(JSON.stringify(value));
+            if (keys[i] != "currentSKU") {
+                data.push(JSON.stringify(value));
+            }
         }
 
         resolve(data)
     })
 }
 
+module.exports.readDatabaseSKU = async function () {
+    return new Promise(async (resolve, reject) => {
+        // get value of key currentSKU
+        var currentSKU = await client.get("currentSKU");
+
+        // if currentSKU is null, set it to 0
+        if (currentSKU == null) {
+            await client.set("currentSKU", 0);
+
+            currentSKU = 0;
+        }
+        
+
+        // return new value
+        resolve(currentSKU);
+    })
+}
+
+module.exports.setDatabaseSKU = async function (sku) {
+    return new Promise(async (resolve, reject) => {
+        // set value of key currentSKU
+        await client.set("currentSKU", sku);
+
+        resolve();
+    })
+}
+
 module.exports.writeDatabase = async function (value) {
     return new Promise(async (resolve, reject) => {
-
-        console.log(value);
 
         value = JSON.parse(value)
 

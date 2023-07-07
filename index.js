@@ -10,7 +10,7 @@ const fs = require('fs');
 
 const crypto = require('crypto');
 
-const { writeDatabase, readDatabase, connectDatabase, deleteDatabase } = require("./db-manager")
+const { writeDatabase, readDatabase, connectDatabase, deleteDatabase, readDatabaseSKU } = require("./db-manager")
 
 const { Client, Environment } = require('square');
 const path = require('path');
@@ -91,67 +91,14 @@ async function createReverbListing(item) {
 async function getHighestSku() {
   return new Promise(async (resolve, reject) => {
     try{
-      let cursor = '';
-      let hasMoreItems = true;
-      let items = [];
 
-      while (hasMoreItems) {
-        try {
-          const response = await squareClient.catalogApi.listCatalog(cursor);
-          const { objects, cursor: nextCursor } = response.result;
-          items = items.concat(objects);
+      // get string from redis database and add 1 to it and resolve it
 
-          if (!nextCursor) {
-            hasMoreItems = false;
-          } else {
-            cursor = nextCursor;
-          }
+      var currentSKU = await readDatabaseSKU();
 
-        } catch (error) {
-          logToFile('Error while fetching catalog items: ' + error);
-        }
-      }
+      currentSKU = parseInt(currentSKU) + 1;
 
-      // Sort items by SKU  
-      items.sort((a, b) => {
-        if (a.type === "ITEM" && b.type === "ITEM") {
-
-          const variationA = a.itemData.variations[0];
-
-          const variationB = b.itemData.variations[0];
-
-          if (variationA && variationB) {
-
-            const skuA = variationA.sku ? variationA.sku.toUpperCase() : '';
-
-            const skuB = variationB.sku ? variationB.sku.toUpperCase() : '';
-
-            if (skuA < skuB) {
-
-              return -1;
-
-            }
-
-            if (skuA > skuB) {
-
-              return 1;
-
-            }
-
-          }
-        }
-
-        return 0;
-      });
-
-      const highestSku = items[items.length - 1].itemData.variations[0].itemVariationData.sku;
-
-      if (isNaN(highestSku)) {
-        logToFile('Highest SKU value is NaN: ' + highestSku);
-        resolve(highestSku)
-      } else {
-        resolve(highestSku);
-      }
+      resolve(currentSKU);
 
     } catch (error) {
       logToFile('Error in getHighestSku: ' + error);
@@ -271,7 +218,6 @@ async function createSquareItem(data) {
             ]
           });
 
-          console.log('Created Item: ' + objectResponse.result.catalogObject.id);
           logToFile('Created Item: ' + objectResponse.result.catalogObject.id);
 
           squareIDs.push(objectResponse.result.catalogObject.id);
@@ -329,13 +275,9 @@ io.on('connection', async (socket) => {
 
       var squareIDs = await createSquareItem(value);
 
-      console.log(squareIDs);
-
       await value.items.map((item, i) => {
         value.items[i].squareID = squareIDs[i];
       })
-
-      console.log(value.toString() + " was created");
 
       await writeDatabase(JSON.stringify(value));
 
@@ -355,7 +297,6 @@ io.on('connection', async (socket) => {
   });
 
   socket.on("request-update", async (value) => {
-    console.log("requested Update")
 
     const data = await readDatabase();
     io.to(socket.id).emit("update", data)
@@ -376,7 +317,6 @@ io.on('connection', async (socket) => {
     socket.emit("reverb")
     socket.emit("data", await readDatabase())
     io.emit("update", await readDatabase())
-    console.log("Create Reverb")
   })
 
   socket.on("deleteItem", async (transactionID) => {
