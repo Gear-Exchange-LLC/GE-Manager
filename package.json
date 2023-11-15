@@ -24,7 +24,7 @@
     "pdfkit": "^0.13.0",
     "redis": "^4.6.5",
     "socket.io": "^4.5.4",
-    "square": "^31.0.0",
+    "square": "^33.0.0",
     "express-rate-limit": "^7.0.1"
   }
 }
